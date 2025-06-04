@@ -19,7 +19,9 @@ func main() {
 	}
 
 	script, err := os.ReadFile(os.Args[2])
+
 	data, err := os.ReadFile(os.Args[2])
+
 	if err != nil {
 		log.Fatal(err)
 	}

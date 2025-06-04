@@ -97,6 +97,26 @@ func (b *BoolValue) Capture(values []string) error {
 
 var langLexer = lexer.MustSimple([]lexer.SimpleRule{
 	{Name: "Move", Pattern: `\^_\^|v_v|<_<|>_>|o_o|~_~`},
+	{Name: "Number", Pattern: `[-+]?(?:\d+|[xX][0-9A-F]+)`},
+	{Name: "Bool", Pattern: `shinri|uso`},
+}
+
+type BoolValue bool
+
+func (b *BoolValue) Capture(values []string) error {
+	switch values[0] {
+	case "shinri":
+		*b = true
+	case "uso":
+		*b = false
+	default:
+		return fmt.Errorf("invalid bool %s", values[0])
+	}
+	return nil
+}
+
+var langLexer = lexer.MustSimple([]lexer.SimpleRule{
+	{Name: "Move", Pattern: `\^_\^|v_v|<_<|>_>|o_o|~_~`},
 	{Name: "Number", Pattern: `[-+]?(?:\d+|x[0-9A-F]+)`},
 	{Name: "Bool", Pattern: `shinri|uso`},
 	Number *int    `parser:"@Number"`
