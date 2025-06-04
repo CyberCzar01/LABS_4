@@ -102,6 +102,9 @@ func (s *Statement) Exec(ctx *Context) error {
 		case "~_~":
 			ctx.Robot.Move(0, -1, 0)
 		}
+		if ctx.Lab != nil {
+			ctx.Lab.Display(ctx.Robot)
+		}
 	case s.Loop != nil:
 		start, err := s.Loop.From.Eval(ctx)
 		if err != nil {
