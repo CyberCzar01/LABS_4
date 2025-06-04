@@ -50,6 +50,11 @@ func TestParserPrecedence(t *testing.T) {
 }
 
 func TestParserCharClass(t *testing.T) {
+
+	re := newRE(t, "[a-c]+")
+	acc(t, re, "abcabc", true)
+	acc(t, re, "d", false)
+
         re := newRE(t, "[a-c]+")
         acc(t, re, "abcabc", true)
         acc(t, re, "d", false)

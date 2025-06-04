@@ -157,6 +157,13 @@ func (r *Regex) matchWithGroups(s string, starts, ends []int) int {
 		ch, sz := utf8.DecodeRuneInString(s[pos:])
 		next := map[*nfaState]struct{}{}
 
+		for st := range curr {
+			for _, e := range st.edges {
+				if e.symbol == ch {
+					next[e.to] = struct{}{}
+				}
+			}
+		}
                 for st := range curr {
                         for _, e := range st.edges {
                                 switch {

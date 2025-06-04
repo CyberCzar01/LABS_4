@@ -1,0 +1,1425 @@
+package regexlib
+
+import "strings"
+
+// ToRegexp превращает минимальный DFA в эквивалентное регулярное выражение
+// методом исключения состояний (McNaughton-Yamada).
+func (d *DFA) ToRegexp() string {
+	if d == nil || len(d.States) == 0 {
+		return "∅"
+	}
+
+	n := len(d.States)
+	R := make([][]string, n)
+	for i := range R {
+		R[i] = make([]string, n)
+	}
+
+	// 1. инициализируем прямые рёбра
+	for _, s := range d.States {
+		for c, t := range s.trans {
+			lex := escapeRune(c)
+			if R[s.id][t.id] == "" {
+				R[s.id][t.id] = lex
+			} else {
+				R[s.id][t.id] += "|" + lex
+			}
+		}
+	}
+
+	start := d.Start.id
+	finals := make([]int, 0, len(d.States))
+	for _, s := range d.States {
+		if s.accept {
+			finals = append(finals, s.id)
+		}
+	}
+
+	// 2. последовательно исключаем промежуточные состояния
+	for k := 0; k < n; k++ {
+		for i := 0; i < n; i++ {
+			if i == k {
+				continue
+			}
+			for j := 0; j < n; j++ {
+				if j == k {
+					continue
+				}
+
+				rik := R[i][k]
+				rkk := R[k][k]
+				rkj := R[k][j]
+
+				if rik == "" || rkj == "" {
+					continue
+				}
+
+				var middle string
+				if rkk != "" {
+					middle = "(" + rkk + ")*"
+				}
+				expr := concat(regexAlt(rik), middle, regexAlt(rkj))
+
+				if R[i][j] == "" {
+					R[i][j] = expr
+				} else {
+					R[i][j] += "|" + expr
+				}
+			}
+		}
+	}
+
+	// 3. собираем выражение между стартом и любым финалом
+	var resultParts []string
+	for _, f := range finals {
+		if part := R[start][f]; part != "" {
+			resultParts = append(resultParts, part)
+		}
+	}
+	if len(resultParts) == 0 {
+		return "∅"
+	}
+	return strings.Join(resultParts, "|")
+}
+
+// --- вспомогательные функции ------------------------------------------------
+
+func escapeRune(r rune) string {
+	switch r {
+	case '*', '+', '?', '|', '(', ')', '[', ']', '{', '}', '.':
+		return "\\" + string(r)
+	default:
+		return string(r)
+	}
+}
+
+func concat(parts ...string) string {
+	var b strings.Builder
+	for _, p := range parts {
+		if p != "" {
+			b.WriteString(p)
+		}
+	}
+	return b.String()
+}
+
+func regexAlt(s string) string {
+	if strings.ContainsRune(s, '|') {
+		return "(" + s + ")"
+	}
+	return s
+}
+package regexlib
+
+import "sort"
+
+// complement on complete DFA (assumes total transition function)
+func Complement(d *DFA) *DFA {
+	// shallow copy states first
+	newStates := make([]*dfaState, len(d.States))
+	for i, s := range d.States {
+		newStates[i] = &dfaState{id: i, accept: !s.accept, trans: map[rune]*dfaState{}}
+	}
+	for i, s := range d.States {
+		for c, t := range s.trans {
+			newStates[i].trans[c] = newStates[t.id]
+		}
+	}
+	return &DFA{Start: newStates[d.Start.id], States: newStates, Alpha: d.Alpha}
+}
+
+func Product(a, b *DFA, op func(bool, bool) bool) *DFA {
+	type pair struct{ i, j int }
+	mp := map[pair]*dfaState{}
+	startPair := pair{a.Start.id, b.Start.id}
+	start := &dfaState{id: 0, accept: op(a.Start.accept, b.Start.accept), trans: map[rune]*dfaState{}}
+	mp[startPair] = start
+	queue := []pair{startPair}
+	states := []*dfaState{start}
+	alpha := unionRunes(a.Alpha, b.Alpha)
+	for len(queue) > 0 {
+		p := queue[0]
+		queue = queue[1:]
+		cur := mp[p]
+		for _, c := range alpha {
+			ta, oka := a.States[p.i].trans[c]
+			tb, okb := b.States[p.j].trans[c]
+			if !oka || !okb {
+				continue
+			}
+			np := pair{ta.id, tb.id}
+			ns, exists := mp[np]
+			if !exists {
+				ns = &dfaState{id: len(states), accept: op(ta.accept, tb.accept), trans: map[rune]*dfaState{}}
+				mp[np] = ns
+				states = append(states, ns)
+				queue = append(queue, np)
+			}
+			cur.trans[c] = ns
+		}
+	}
+	return &DFA{Start: start, States: states, Alpha: alpha}
+}
+
+func unionRunes(a, b []rune) []rune {
+	m := map[rune]struct{}{}
+	for _, r := range a {
+		m[r] = struct{}{}
+	}
+	for _, r := range b {
+		m[r] = struct{}{}
+	}
+	out := make([]rune, 0, len(m))
+	for r := range m {
+		out = append(out, r)
+	}
+	sort.Slice(out, func(i, j int) bool { return out[i] < out[j] })
+	return out
+}
+
+// Intersection: op = &&
+func IntersectDFA(a, b *DFA) *DFA { return Product(a, b, func(x, y bool) bool { return x && y }) }
+
+// Union: op = ||
+func UnionDFA(a, b *DFA) *DFA { return Product(a, b, func(x, y bool) bool { return x || y }) }
+
+// Reverse language: make NFA by reversing edges then determinise
+func ReverseDFA(d *DFA) *DFA {
+	// build reverse NFA
+	nodes := make([]*nfaState, len(d.States))
+	for i := range nodes {
+		nodes[i] = newState()
+	}
+	start := newState()
+	acceptSet := map[*nfaState]struct{}{}
+	for _, s := range d.States {
+		if s.accept {
+			acceptSet[nodes[s.id]] = struct{}{}
+		}
+	}
+	// ε from new start to each accept of original
+	for acc := range acceptSet {
+		start.edges = append(start.edges, &nfaEdge{symbol: 0, to: acc})
+	}
+	// reverse transitions
+	for _, s := range d.States {
+		for c, to := range s.trans {
+			nodes[to.id].edges = append(nodes[to.id].edges, &nfaEdge{symbol: c, to: nodes[s.id]})
+		}
+	}
+	acceptDummy := newState()
+	acceptDummy.accept = true
+	return nfaToDFA(start, acceptDummy, d.Alpha)
+}
+package regexlib
+
+import "testing"
+
+func TestLexer(t *testing.T) {
+	l := newLexer("a{3}b|c#\\1[d-f]")
+	tok := l.next()
+	if tok.typ != tChar || tok.ch != 'a' {
+		t.Fail()
+	}
+}
+package regexlib
+
+func Minimize(d *DFA) *DFA {
+	if d == nil || d.Start == nil {
+		return d // пустой автомат → ничего минимизировать
+	}
+
+	// --- 1. начальное разбиение  ------------------------------------------
+	acc, non := make(map[*dfaState]struct{}), make(map[*dfaState]struct{})
+	for _, s := range d.States {
+		if s.accept {
+			acc[s] = struct{}{}
+		} else {
+			non[s] = struct{}{}
+		}
+	}
+
+	partitions := make([]map[*dfaState]struct{}, 0, 2)
+	if len(acc) != 0 {
+		partitions = append(partitions, acc)
+	}
+	if len(non) != 0 {
+		partitions = append(partitions, non)
+	}
+
+	// Вместо сравнения map'ов храним ИНДЕКСЫ блоков в work-множине
+	work := make([]int, len(partitions))
+	for i := range work {
+		work[i] = i
+	}
+
+	contains := func(set map[*dfaState]struct{}, s *dfaState) bool {
+		_, ok := set[s]
+		return ok
+	}
+
+	// --- 2. основной цикл ---------------------------------------------------
+	for len(work) > 0 {
+		idx := work[0]
+		work = work[1:]
+		A := partitions[idx]
+
+		for _, c := range d.Alpha {
+			// X ← предобраз A по символу c
+			X := make(map[*dfaState]struct{})
+			for _, s := range d.States {
+				if t, ok := s.trans[c]; ok && contains(A, t) {
+					X[s] = struct{}{}
+				}
+			}
+
+			// refine: каждая Y ∈ P = (inter ∧ diff)
+			for pIdx := 0; pIdx < len(partitions); pIdx++ {
+				Y := partitions[pIdx]
+				inter := make(map[*dfaState]struct{})
+				diff := make(map[*dfaState]struct{})
+
+				for s := range Y {
+					if contains(X, s) {
+						inter[s] = struct{}{}
+					} else {
+						diff[s] = struct{}{}
+					}
+				}
+				if len(inter) == 0 || len(diff) == 0 {
+					continue // не разбилось
+				}
+
+				// заменить Y на два новых блока
+				partitions[pIdx] = inter
+				partitions = append(partitions, diff)
+
+				// правило Hopcroft: в work кладём МЕНЬШИЙ блок
+				if len(inter) < len(diff) {
+					work = append(work, pIdx)
+				} else {
+					work = append(work, len(partitions)-1)
+				}
+			}
+		}
+	}
+
+	// --- 3. строим уменьшенный DFA -----------------------------------------
+	// каждому старому состоянию ставим в соответствие представителя блока
+	representative := make(map[*dfaState]*dfaState)
+	for _, P := range partitions {
+		var first *dfaState
+		for s := range P {
+			first = s
+			break
+		}
+		newState := &dfaState{
+			id:     len(representative),
+			accept: first.accept,
+			trans:  make(map[rune]*dfaState),
+		}
+		for s := range P {
+			representative[s] = newState
+		}
+	}
+
+	// переносим переходы
+	for old, rep := range representative {
+		for c, to := range old.trans {
+			rep.trans[c] = representative[to]
+		}
+	}
+
+	// собираем уникальные состояния
+	uniqMap := make(map[*dfaState]struct{})
+	for _, s := range representative {
+		uniqMap[s] = struct{}{}
+	}
+	uniq := make([]*dfaState, 0, len(uniqMap))
+	for s := range uniqMap {
+		uniq = append(uniq, s)
+	}
+
+	return &DFA{
+		Start:  representative[d.Start],
+		States: uniq,
+		Alpha:  d.Alpha,
+	}
+}
+package regexlib
+
+import (
+	"container/list"
+	"fmt"
+	"sort"
+)
+
+type dfaState struct {
+	id     int
+	accept bool
+	trans  map[rune]*dfaState
+	// group capture ids not tracked in DFA (simplified)
+}
+
+type DFA struct {
+	Start  *dfaState
+	States []*dfaState
+	Alpha  []rune
+}
+
+func epsilonClosure(set map[*nfaState]struct{}) map[*nfaState]struct{} {
+	stack := list.New()
+	for s := range set {
+		stack.PushBack(s)
+	}
+	for stack.Len() > 0 {
+		elem := stack.Remove(stack.Back()).(*nfaState)
+		for _, e := range elem.edges {
+			if e.symbol == 0 {
+				if _, ok := set[e.to]; !ok {
+					set[e.to] = struct{}{}
+					stack.PushBack(e.to)
+				}
+			}
+		}
+	}
+	return set
+}
+
+func moveNFA(set map[*nfaState]struct{}, sym rune, runeset []rune) map[*nfaState]struct{} {
+	res := make(map[*nfaState]struct{})
+	for s := range set {
+		for _, e := range s.edges {
+			if e.symbol > 0 && e.symbol == sym {
+				res[e.to] = struct{}{}
+			} else if e.symbol == -1 {
+				// char class
+				for _, r := range e.set {
+					if r == sym {
+						res[e.to] = struct{}{}
+						break
+					}
+				}
+			}
+		}
+	}
+	return res
+}
+
+func nfaToDFAcore(start *nfaState, alpha []rune) *DFA {
+	// initial
+	initSet := epsilonClosure(map[*nfaState]struct{}{start: {}})
+	key := func(set map[*nfaState]struct{}) string {
+		ids := make([]int, 0, len(set))
+		for s := range set {
+			ids = append(ids, s.id)
+		}
+		sort.Ints(ids)
+		return fmt.Sprint(ids)
+	}
+	mp := map[string]*dfaState{}
+	dStart := &dfaState{id: 0, trans: map[rune]*dfaState{}}
+	mp[key(initSet)] = dStart
+	if hasAccept(initSet) {
+		dStart.accept = true
+	}
+	queue := []map[*nfaState]struct{}{initSet}
+	states := []*dfaState{dStart}
+	for len(queue) > 0 {
+		curSet := queue[0]
+		queue = queue[1:]
+		curKey := key(curSet)
+		curD := mp[curKey]
+		for _, sym := range alpha {
+			moveSet := moveNFA(curSet, sym, alpha)
+			if len(moveSet) == 0 {
+				continue
+			}
+			clo := epsilonClosure(moveSet)
+			k := key(clo)
+			d, exists := mp[k]
+			if !exists {
+				d = &dfaState{id: len(states), trans: map[rune]*dfaState{}}
+				if hasAccept(clo) {
+					d.accept = true
+				}
+				mp[k] = d
+				states = append(states, d)
+				queue = append(queue, clo)
+			}
+			curD.trans[sym] = d
+		}
+	}
+	return &DFA{Start: dStart, States: states, Alpha: alpha}
+}
+
+func hasAccept(set map[*nfaState]struct{}) bool {
+	for s := range set {
+		if s.accept {
+			return true
+		}
+	}
+	return false
+}
+package regexlib
+
+import (
+	"unicode/utf8"
+)
+
+type tokenType int
+
+const (
+	tEOF      tokenType = iota
+	tChar               // literal rune
+	tLParen             // (
+	tRParen             // )
+	tStar               // *
+	tPlus               // +
+	tQMark              // ?
+	tUnion              // |
+	tLBracket           // [
+	tRBracket           // ]
+	tDash               // - inside []
+	tLBrace             // {
+	tRBrace             // }
+	tComma              // , (for {m,n})
+	tEpsilon            // #
+	tBackRef            // \1..\9 etc
+)
+
+type token struct {
+	typ tokenType
+	ch  rune // for tChar
+	num int  // for tBackRef, {n}
+}
+
+type lexer struct {
+	input string
+	pos   int
+}
+
+func newLexer(s string) *lexer { return &lexer{input: s} }
+
+func (l *lexer) next() token {
+	if l.pos >= len(l.input) {
+		return token{typ: tEOF}
+	}
+	r, size := utf8.DecodeRuneInString(l.input[l.pos:])
+	l.pos += size
+	switch r {
+	case '(':
+		return token{typ: tLParen}
+	case ')':
+		return token{typ: tRParen}
+	case '*':
+		return token{typ: tStar}
+	case '+':
+		return token{typ: tPlus}
+	case '?':
+		return token{typ: tQMark}
+	case '|':
+		return token{typ: tUnion}
+	case '[':
+		return token{typ: tLBracket}
+	case ']':
+		return token{typ: tRBracket}
+	case '-':
+		return token{typ: tDash}
+	case '{':
+		return token{typ: tLBrace}
+	case '}':
+		return token{typ: tRBrace}
+	case ',':
+		return token{typ: tComma}
+	case '#':
+		return token{typ: tEpsilon}
+	case '\\':
+		if l.pos >= len(l.input) {
+			// standalone backslash => treat as literal
+			return token{typ: tChar, ch: r}
+		}
+		// lookahead
+		r2, s2 := utf8.DecodeRuneInString(l.input[l.pos:])
+		if r2 >= '0' && r2 <= '9' {
+			l.pos += s2
+			return token{typ: tBackRef, num: int(r2 - '0')}
+		}
+		l.pos += s2
+		return token{typ: tChar, ch: r2}
+	default:
+		return token{typ: tChar, ch: r}
+	}
+}
+package regexlib
+
+type nodeType int
+
+const (
+	nEmpty nodeType = iota // ε
+	nChar
+	nConcat
+	nUnion
+	nStar
+	nPlus
+	nQMark
+	nRepeat  // {m,n}
+	nSet     // character class
+	nGroup   // ( ... )
+	nBackRef // \1 etc
+)
+
+type astNode struct {
+	typ   nodeType
+	left  *astNode
+	right *astNode
+
+	ch       rune   // for nChar
+	charset  []rune // for nSet
+	min, max int    // for nRepeat
+	grpNum   int    // group number or backref target
+}
+
+func charNode(r rune) *astNode { return &astNode{typ: nChar, ch: r} }
+package regexlib
+
+import (
+	"errors"
+	"unicode/utf8"
+)
+
+// Regex — скомпилированное регулярное выражение (AST + NFA + DFA).
+type Regex struct {
+	pattern string
+	ast     *astNode
+
+	// число захватывающих групп
+	numGroups int
+
+	// для визуализации
+	nfaStart  *nfaState
+	nfaAccept *nfaState
+
+	// детерминированный, но ещё не минимизированный DFA
+	rawDFA *DFA
+
+	// основная минимизированная машина
+	dfa      *DFA
+	alphabet []rune
+}
+
+// Compile строит AST → ε-НКА → DFA → минимальный DFA.
+func Compile(pattern string) (*Regex, error) {
+	if pattern == "" {
+		return nil, errors.New("empty pattern")
+	}
+
+	// 1) парсим
+	p := newParser(pattern)
+	ast, err := p.parse()
+	if err != nil {
+		return nil, err
+	}
+
+	// 1.1) считаем число групп
+	num := countGroups(ast)
+
+	// 2) Томпсон-NFA
+	startNFA, acceptNFA := compileASTtoNFA(ast)
+
+	// 3) алфавит — собираем литералы и символы из классов
+	alphaSet := map[rune]struct{}{}
+	var walk func(*astNode)
+	walk = func(n *astNode) {
+		if n == nil {
+			return
+		}
+		switch n.typ {
+		case nChar:
+			alphaSet[n.ch] = struct{}{}
+		case nSet:
+			for _, r := range n.charset {
+				alphaSet[r] = struct{}{}
+			}
+		}
+		walk(n.left)
+		walk(n.right)
+	}
+	walk(ast)
+
+	alphabet := make([]rune, 0, len(alphaSet))
+	for r := range alphaSet {
+		alphabet = append(alphabet, r)
+	}
+
+	// 4) NFA → DFA (сырый, ещё не минимизированный)
+	raw := nfaToDFAcore(startNFA, alphabet)
+	raw.Alpha = alphabet
+
+	// 5) минимизация
+	min := Minimize(raw)
+
+	return &Regex{
+		pattern:   pattern,
+		ast:       ast,
+		numGroups: num,
+		nfaStart:  startNFA,
+		nfaAccept: acceptNFA,
+		rawDFA:    raw,
+		dfa:       min,
+		alphabet:  alphabet,
+	}, nil
+}
+
+// countGroups возвращает максимальный номер grpNum в AST.
+func countGroups(n *astNode) int {
+	if n == nil {
+		return 0
+	}
+	max := 0
+	if n.typ == nGroup && n.grpNum > max {
+		max = n.grpNum
+	}
+	if m := countGroups(n.left); m > max {
+		max = m
+	}
+	if m := countGroups(n.right); m > max {
+		max = m
+	}
+	return max
+}
+
+// MustCompile — аналог regexp.MustCompile.
+func MustCompile(p string) *Regex {
+	r, err := Compile(p)
+	if err != nil {
+		panic(err)
+	}
+	return r
+}
+
+// DFA возвращает минимальный DFA.
+func (r *Regex) DFA() *DFA {
+	return r.dfa
+}
+
+// NFA возвращает стартовое состояние ε-НКА.
+func (r *Regex) NFA() *nfaState {
+	return r.nfaStart
+}
+
+// Match — диапазон совпадения и группы.
+type Match struct {
+	Start, End int
+	Groups     []string
+}
+
+// FindSubmatchAt пытается найти матч шаблона r в text, начиная с pos.
+// Возвращает subs=[whole, g1, g2...] и длину матча, или nil,0.
+func (r *Regex) FindSubmatchAt(text string, pos int) ([]string, int) {
+	G := r.numGroups
+	starts := make([]int, G+1)
+	ends := make([]int, G+1)
+
+	length := r.matchWithGroups(text[pos:], starts, ends)
+	if length == 0 {
+		return nil, 0
+	}
+
+	subs := make([]string, G+1)
+	subs[0] = text[pos : pos+length]
+	for i := 1; i <= G; i++ {
+		subs[i] = text[pos+starts[i] : pos+ends[i]]
+	}
+	return subs, length
+}
+
+// matchWithGroups — NFA-симуляция с учетом openGroups/closeGroups.
+func (r *Regex) matchWithGroups(s string, starts, ends []int) int {
+	pos := 0
+	curr := epsilonClosure(map[*nfaState]struct{}{r.nfaStart: {}})
+	// стартовые openGroups
+	for st := range curr {
+		for _, g := range st.openGroups {
+			starts[g] = pos
+		}
+	}
+
+	for pos < len(s) {
+		rch, sz := utf8.DecodeRuneInString(s[pos:])
+		next := make(map[*nfaState]struct{})
+		for st := range curr {
+			for _, e := range st.edges {
+				switch {
+				case e.symbol > 0 && e.symbol == rch:
+					next[e.to] = struct{}{}
+				case e.symbol == -1:
+					for _, r2 := range e.set {
+						if r2 == rch {
+							next[e.to] = struct{}{}
+							break
+						}
+					}
+				case e.symbol == 0:
+					// ε-дуга
+				case e.symbol == -2:
+					// backref пропущен
+				}
+			}
+		}
+		next = epsilonClosure(next)
+		if len(next) == 0 {
+			break
+		}
+		pos += sz
+		curr = next
+		// отмечаем open/close групп
+		for st := range curr {
+			for _, g := range st.openGroups {
+				starts[g] = pos - sz
+			}
+			for _, g := range st.closeGroups {
+				ends[g] = pos
+			}
+		}
+	}
+
+	for st := range curr {
+		if st.accept {
+			return pos
+		}
+	}
+	return 0
+}
+
+// FindAll возвращает все непересекающиеся вхождения.
+func (r *Regex) FindAll(text string) []Match {
+	var matches []Match
+	n := len(text)
+	for pos := 0; pos < n; {
+		subs, length := r.FindSubmatchAt(text, pos)
+		if length > 0 {
+			matches = append(matches, Match{
+				Start:  pos,
+				End:    pos + length,
+				Groups: subs[1:],
+			})
+			pos += length
+		} else {
+			_, sz := utf8.DecodeRuneInString(text[pos:])
+			pos += sz
+		}
+	}
+	return matches
+}
+
+// longestPrefix возвращает длину максимального DFA-префикса.
+func (r *Regex) longestPrefix(text string, pos int) int {
+	st := r.dfa.Start
+	i := pos
+	last := -1
+	if st.accept {
+		last = i
+	}
+	for i < len(text) {
+		ch, sz := utf8.DecodeRuneInString(text[i:])
+		nx, ok := st.trans[ch]
+		if !ok {
+			break
+		}
+		st = nx
+		i += sz
+		if st.accept {
+			last = i
+		}
+	}
+	return last
+}
+package regexlib
+
+// ---------------------------------------------------------------------------
+// Совместимость: compileASTtoNFA (ожидает regexp.go)
+// ---------------------------------------------------------------------------
+
+func compileASTtoNFA(root *astNode) (start, accept *nfaState) {
+	frag := buildNFA(root)
+
+	accept = newState()
+	accept.accept = true
+	patchOuts(frag.outs, accept)
+
+	return frag.start, accept
+}
+
+// ---------------------------------------------------------------------------
+// Совместимость: nfaToDFA(start, accept, alphabet)
+// ---------------------------------------------------------------------------
+
+// Старая сигнатура с тремя параметрами вызывает «ядро» из dfa.go.
+func nfaToDFA(start, accept *nfaState, alphabet []rune) *DFA {
+	return nfaToDFAcore(start, alphabet)
+}
+package regexlib
+
+import (
+	"fmt"
+	"strconv"
+)
+
+type parser struct {
+	lex       *lexer
+	look      token
+	nextGroup int
+}
+
+func newParser(pat string) *parser {
+	p := &parser{lex: newLexer(pat), nextGroup: 1}
+	p.look = p.lex.next()
+	return p
+}
+
+func (p *parser) scan() { p.look = p.lex.next() }
+
+// Pratt-парсер
+func (p *parser) parse() (*astNode, error) { return p.parseExpr(1) }
+
+func precedence(t tokenType) int {
+	switch t {
+	case tUnion:
+		return 1
+	case tChar, tLParen, tLBracket, tEpsilon, tBackRef:
+		return 2 // неявная конкатенация
+	case tStar, tPlus, tQMark, tLBrace:
+		return 3
+	default:
+		return 0
+	}
+}
+
+func (p *parser) parseExpr(minPrec int) (*astNode, error) {
+	// ---------- префикс ----------
+	var left *astNode
+	switch p.look.typ {
+	case tChar:
+		left = charNode(p.look.ch)
+		p.scan()
+	case tEpsilon:
+		left = &astNode{typ: nEmpty}
+		p.scan()
+	case tLParen:
+		p.scan()
+		inner, err := p.parseExpr(1)
+		if err != nil {
+			return nil, err
+		}
+		if p.look.typ != tRParen {
+			return nil, fmt.Errorf("expected )")
+		}
+		left = &astNode{typ: nGroup, left: inner, grpNum: p.nextGroup}
+		p.nextGroup++
+		p.scan()
+	case tLBracket:
+		p.scan() // поглощаем '['
+		set, err := p.parseCharClass()
+		if err != nil {
+			return nil, err
+		}
+		left = &astNode{typ: nSet, charset: set}
+	case tBackRef:
+		left = &astNode{typ: nBackRef, grpNum: p.look.num}
+		p.scan()
+	default:
+		return nil, fmt.Errorf("unexpected token %v", p.look.typ)
+	}
+
+	// ---------- суффиксы (* + ? {m,n}) ----------
+	for {
+		switch p.look.typ {
+		case tStar:
+			left = &astNode{typ: nStar, left: left}
+			p.scan()
+		case tPlus:
+			left = &astNode{typ: nPlus, left: left}
+			p.scan()
+		case tQMark:
+			left = &astNode{typ: nQMark, left: left}
+			p.scan()
+		case tLBrace:
+			min, max, err := p.parseRepeat()
+			if err != nil {
+				return nil, err
+			}
+			left = &astNode{typ: nRepeat, left: left, min: min, max: max}
+		default:
+			goto noPostfix
+		}
+	}
+noPostfix:
+
+	// ---------- инфиксы (конкатенация, |) ----------
+	for precedence(p.look.typ) >= minPrec {
+		tok := p.look
+		var prec int
+		switch tok.typ {
+		case tUnion:
+			prec = 1
+			p.scan() // съедаем '|'
+		default: // неявная конкатенация
+			prec = 2
+			// НЕ двигаем p.scan(): текущий токен уже начало RHS
+			tok.typ = 999 // фиктивный
+		}
+
+		nextMin := prec + 1 // левая ассоц. для обоих операторов
+		right, err := p.parseExpr(nextMin)
+		if err != nil {
+			return nil, err
+		}
+
+		if tok.typ == tUnion {
+			left = &astNode{typ: nUnion, left: left, right: right}
+		} else {
+			left = &astNode{typ: nConcat, left: left, right: right}
+		}
+	}
+
+	return left, nil
+}
+
+/* ----------------------- вспомогательные парсеры ----------------------- */
+
+func (p *parser) parseCharClass() ([]rune, error) {
+	negate := false
+	set := map[rune]struct{}{}
+
+	if p.look.typ == tChar && p.look.ch == '^' {
+		negate = true
+		p.scan()
+	}
+
+	for p.look.typ != tRBracket && p.look.typ != tEOF {
+		if p.look.typ != tChar {
+			return nil, fmt.Errorf("invalid char class token")
+		}
+		start := p.look.ch
+		p.scan()
+
+		if p.look.typ == tDash {
+			p.scan()
+			if p.look.typ != tChar {
+				return nil, fmt.Errorf("incomplete range")
+			}
+			end := p.look.ch
+			p.scan()
+			for r := start; r <= end; r++ {
+				set[r] = struct{}{}
+			}
+		} else {
+			set[start] = struct{}{}
+		}
+	}
+
+	if p.look.typ != tRBracket {
+		return nil, fmt.Errorf("missing ]")
+	}
+	p.scan() // потребляем ']'
+
+	out := make([]rune, 0, len(set))
+	for r := range set {
+		out = append(out, r)
+	}
+	if negate {
+		full := make([]rune, 128)
+		for i := 0; i < 128; i++ {
+			full[i] = rune(i)
+		}
+		neg := out[:0]
+		for _, r := range full {
+			if _, ok := set[r]; !ok {
+				neg = append(neg, r)
+			}
+		}
+		return neg, nil
+	}
+	return out, nil
+}
+
+func (p *parser) parseRepeat() (int, int, error) {
+	p.scan() // '{'
+	num := ""
+	for p.look.typ == tChar && p.look.ch >= '0' && p.look.ch <= '9' {
+		num += string(p.look.ch)
+		p.scan()
+	}
+	if num == "" {
+		return 0, 0, fmt.Errorf("expected number")
+	}
+	min, _ := strconv.Atoi(num)
+	max := min
+	if p.look.typ == tComma {
+		p.scan()
+		num = ""
+		for p.look.typ == tChar && p.look.ch >= '0' && p.look.ch <= '9' {
+			num += string(p.look.ch)
+			p.scan()
+		}
+		if num == "" {
+			max = -1
+		} else {
+			max, _ = strconv.Atoi(num)
+		}
+	}
+	if p.look.typ != tRBrace {
+		return 0, 0, fmt.Errorf("expected }")
+	}
+	p.scan()
+	return min, max, nil
+}
+// file: regexlib/regex_test.go
+package regexlib
+
+import (
+	"strings"
+	"testing"
+)
+
+// ------------------------------------------------------------------- helpers
+
+func acc(t *testing.T, re *Regex, in string, want bool) {
+	got := re.FindAll(in)
+	if (len(got) > 0) != want {
+		t.Fatalf("pattern %q on %q want %v got %v", re.pattern, in, want, got)
+	}
+}
+
+func newRE(t *testing.T, pat string) *Regex {
+	re, err := Compile(pat)
+	if err != nil {
+		t.Fatalf("compile %q: %v", pat, err)
+	}
+	return re
+}
+
+// ------------------------------------------------------------------- Lexer
+
+func TestLexerTokens(t *testing.T) {
+	l := newLexer(`a\*#|()[d-f]{3}\1`)
+	want := []tokenType{
+		tChar, tChar, tEpsilon, tUnion, tLParen, tRParen,
+		tLBracket, tChar, tDash, tChar, tRBracket,
+		tLBrace, tChar, tRBrace, tBackRef, tEOF,
+	}
+	for i, typ := range want {
+		if tok := l.next(); tok.typ != typ {
+			t.Fatalf("tok %d want %v got %v", i, typ, tok.typ)
+		}
+	}
+}
+
+// ------------------------------------------------------------------- Parser
+
+func TestParserPrecedence(t *testing.T) {
+	re := newRE(t, "a|bc*")
+	acc(t, re, "a", true)
+	acc(t, re, "bc", true)
+	acc(t, re, "bccc", true)
+	acc(t, re, "ab", false)
+}
+
+func TestParserCharClass(t *testing.T) {
+	re := newRE(t, "[a-c]+")
+	acc(t, re, "abcabc", true)
+	acc(t, re, "d", false)
+}
+
+// ------------------------------------------------------------------- NFA ←→ DFA
+
+// ------------------------------------------------------------------- Minimize
+
+func TestMinimizeCount(t *testing.T) {
+	re := newRE(t, "a|ab")
+	before := len(re.dfa.States)
+	min := Minimize(re.dfa)
+	after := len(min.States)
+	if before == after {
+		t.Fatalf("expected fewer states (%d→?)", before)
+	}
+	if after != 2 {
+		t.Fatalf("want 2 states got %d", after)
+	}
+}
+
+// ------------------------------------------------------------------- FindAll + groups
+
+func TestFindAllGroups(t *testing.T) {
+	re := newRE(t, `(ab)c\1`)
+	text := "xxabcab yy"
+	m := re.FindAll(text)
+	if len(m) != 1 || text[m[0].Start:m[0].End] != "abcab" {
+		t.Fatalf("groups match wrong %v", m)
+	}
+}
+
+// ------------------------------------------------------------------- Set-ops
+
+func TestSetOps(t *testing.T) {
+	a := newRE(t, "[ab]*")
+	b := newRE(t, "a+")
+	inter := a.Intersect(b)
+	acc(t, inter, "aaa", true)
+	acc(t, inter, "b", false)
+
+	comp := a.Complement()
+	acc(t, comp, "ccc", true)
+	acc(t, comp, "aba", false)
+
+	rev := newRE(t, "ab*").Reverse()
+	acc(t, rev, "baa", true)
+	acc(t, rev, "ab", false)
+}
+
+// ------------------------------------------------------------------- ToRegexp
+
+func TestToRegexpPreservesLanguage(t *testing.T) {
+	re := newRE(t, "a(b|c)*d")
+	restored := newRE(t, re.ToRegexp())
+
+	for _, s := range []string{"ad", "abcd", "abcbcd", "acbd"} {
+		want := len(re.FindAll(s)) > 0
+		got := len(restored.FindAll(s)) > 0
+		if want != got {
+			t.Fatalf("restore diff on %q", s)
+		}
+	}
+}
+
+// ------------------------------------------------------------------- Bench (quick)
+
+func BenchmarkMillionAs(b *testing.B) {
+	re := MustCompile("ab*")
+	txt := strings.Repeat("a", 1_000_000)
+	b.ResetTimer()
+	for i := 0; i < b.N; i++ {
+		_ = re.FindAll(txt)
+	}
+}
+
+func TestNFAtoDFAEquivalence(t *testing.T) {
+	pat := "(ab|a)*c"
+	re := newRE(t, pat)
+
+	// все строки длиной ≤4 из {a,b,c}
+	alpha := []string{"", "a", "b", "c"}
+	var words []string
+	for _, x := range alpha {
+		for _, y := range alpha {
+			for _, z := range alpha {
+				for _, w := range alpha {
+					words = append(words, x+y+z+w)
+				}
+			}
+		}
+	}
+	for _, s := range words {
+		n := re.FindAll(s)
+		d := re.ToRegexp() // ← используем публичный метод
+		re2 := newRE(t, d)
+		m := re2.FindAll(s)
+		if (len(n) > 0) != (len(m) > 0) {
+			t.Fatalf("equivalence fail on %q: %v vs %v", s, n, m)
+		}
+	}
+}
+
+// ------------------------------------------------------------------- end
+package regexlib
+
+var stateID int
+
+func nextStateID() int { stateID++; return stateID - 1 }
+
+type nfaState struct {
+	id     int
+	edges  []*nfaEdge
+	accept bool
+	// group markers
+	openGroups  []int
+	closeGroups []int
+}
+
+type nfaEdge struct {
+	symbol rune // 0 = ε, -1 indicates char class, -2 backref placeholder
+	set    []rune
+	to     *nfaState
+}
+
+type nfaFrag struct {
+	start *nfaState
+	outs  []*nfaState // dangling ε edges that need patching to new state
+}
+
+func newState() *nfaState { return &nfaState{id: nextStateID()} }
+
+func patchOuts(outs []*nfaState, to *nfaState) {
+	for _, s := range outs {
+		s.edges = append(s.edges, &nfaEdge{symbol: 0, to: to})
+	}
+}
+
+func buildNFA(node *astNode) nfaFrag {
+	switch node.typ {
+	case nEmpty:
+		s := newState()
+		return nfaFrag{start: s, outs: []*nfaState{s}}
+	case nChar:
+		s1 := newState()
+		s2 := newState()
+		s1.edges = append(s1.edges, &nfaEdge{symbol: node.ch, to: s2})
+		return nfaFrag{start: s1, outs: []*nfaState{s2}}
+	case nSet:
+		s1 := newState()
+		s2 := newState()
+		s1.edges = append(s1.edges, &nfaEdge{symbol: -1, set: node.charset, to: s2})
+		return nfaFrag{start: s1, outs: []*nfaState{s2}}
+	case nConcat:
+		f1 := buildNFA(node.left)
+		f2 := buildNFA(node.right)
+		patchOuts(f1.outs, f2.start)
+		return nfaFrag{start: f1.start, outs: f2.outs}
+	case nUnion:
+		s := newState()
+		f1 := buildNFA(node.left)
+		f2 := buildNFA(node.right)
+		s.edges = append(s.edges, &nfaEdge{symbol: 0, to: f1.start})
+		s.edges = append(s.edges, &nfaEdge{symbol: 0, to: f2.start})
+		outs := append(f1.outs, f2.outs...)
+		return nfaFrag{start: s, outs: outs}
+	case nStar:
+		s := newState()
+		f := buildNFA(node.left)
+		patchOuts(f.outs, s)
+		s.edges = append(s.edges, &nfaEdge{symbol: 0, to: f.start})
+		return nfaFrag{start: s, outs: []*nfaState{s}}
+	case nPlus:
+		f := buildNFA(node.left)
+		patchOuts(f.outs, f.start)
+		return f
+	case nQMark:
+		s := newState()
+		f := buildNFA(node.left)
+		s.edges = append(s.edges, &nfaEdge{symbol: 0, to: f.start})
+		outs := append(f.outs, s)
+		return nfaFrag{start: s, outs: outs}
+	case nRepeat:
+		if node.max != -1 && node.max < node.min {
+			panic("repeat max<min")
+		}
+		// naive expansion
+		var frag nfaFrag
+		for i := 0; i < node.min; i++ {
+			piece := buildNFA(node.left)
+			if i == 0 {
+				frag = piece
+			} else {
+				patchOuts(frag.outs, piece.start)
+				frag.outs = piece.outs
+			}
+		}
+		optionalCount := node.max - node.min
+		if node.max == -1 {
+			optionalCount = 2
+		} // treat {n,} as {n,∞} approx with star
+		for i := 0; i < optionalCount; i++ {
+			// each optional piece is left? (qmark)
+			piece := buildNFA(node.left)
+			// create ε branch to skip piece
+			skipState := newState()
+			patchOuts(frag.outs, skipState)
+			patchOuts(frag.outs, piece.start)
+			frag.outs = append(piece.outs, skipState)
+		}
+		return frag
+	case nGroup:
+		frag := buildNFA(node.left)
+		frag.start.openGroups = append(frag.start.openGroups, node.grpNum)
+		for _, o := range frag.outs {
+			o.closeGroups = append(o.closeGroups, node.grpNum)
+		}
+		return frag
+	case nBackRef:
+		s1 := newState()
+		s2 := newState()
+		s1.edges = append(s1.edges, &nfaEdge{symbol: -2, to: s2, set: []rune{rune(node.grpNum)}})
+		return nfaFrag{start: s1, outs: []*nfaState{s2}}
+	default:
+		panic("unknown ast node")
+	}
+}
+package regexlib
+
+import (
+	"fmt"
+	"io"
+)
+
+// ExportDOT печатает Graphviz-представление NFA или DFA в w.
+func ExportDOT(w io.Writer, g interface{}) {
+	fmt.Fprintln(w, "digraph G {")
+	fmt.Fprintln(w, "    rankdir=LR;")
+
+	switch t := g.(type) {
+
+	//------------------------------------------------------------------ DFA
+	case *DFA:
+		for _, s := range t.States {
+			shape := "circle"
+			if s.accept {
+				shape = "doublecircle"
+			}
+			fmt.Fprintf(w, "    q%d [shape=%s];\n", s.id, shape)
+			for ch, to := range s.trans {
+				fmt.Fprintf(w, "    q%d -> q%d [label=\"%c\"];\n", s.id, to.id, ch)
+			}
+		}
+		fmt.Fprintf(w, "    _start [shape=point]; _start -> q%d;\n", t.Start.id)
+
+	//------------------------------------------------------------------ NFA
+	case *nfaState:
+		visited := map[*nfaState]bool{}
+		var dfs func(*nfaState)
+		dfs = func(s *nfaState) {
+			if visited[s] {
+				return
+			}
+			visited[s] = true
+			shape := "circle"
+			if s.accept {
+				shape = "doublecircle"
+			}
+			fmt.Fprintf(w, "    n%d [shape=%s];\n", s.id, shape)
+
+			for _, e := range s.edges {
+				label := "ε"
+				switch {
+				case e.symbol == 0:
+					label = "ε"
+				case e.symbol == -1:
+					label = "class"
+				case e.symbol == -2:
+					label = fmt.Sprintf("\\%d", e.set[0])
+				default:
+					label = string(e.symbol)
+				}
+				fmt.Fprintf(w, "    n%d -> n%d [label=\"%s\"];\n", s.id, e.to.id, label)
+				dfs(e.to)
+			}
+		}
+		dfs(t)
+		fmt.Fprintf(w, "    _start [shape=point]; _start -> n%d;\n", t.id)
+
+	default:
+		fmt.Fprintln(w, "    /* unknown graph type */")
+	}
+
+	fmt.Fprintln(w, "}")
+}
