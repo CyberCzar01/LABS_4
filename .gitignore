@@ -1,0 +1,10 @@
+# OS-specific
+.DS_Store
+
+# Temporary or binary files
+LAB_2/cmd/all_go_code_1.txt
+LAB_2/regexlib/all_go_code_2.txt
+
+# Test data
+test/Test.bmp
+
