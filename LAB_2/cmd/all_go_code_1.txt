@@ -1,0 +1,119 @@
+package main
+
+import (
+	"bufio"
+	"fmt"
+	"os"
+
+	"lab2ta/regexlib"
+)
+
+func main() {
+	re := regexlib.MustCompile("a(b|c)*d")
+	txt := "abcbcd aaaaaacd abbcd"
+	fmt.Println("matches:", re.FindAll(txt))
+
+	// визуализируем минимальный DFA
+	f, _ := os.Create("dfa.dot")
+	defer f.Close()
+	regexlib.ExportDOT(f, re.DFA())
+	fmt.Println("dfa.dot written (run: dot -Tpng dfa.dot -o dfa.png)")
+
+	// интерактив
+	rdr := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print("pattern> ")
+		pat, _ := rdr.ReadString('\n')
+		if len(pat) == 1 {
+			break
+		}
+		pat = pat[:len(pat)-1]
+		r, err := regexlib.Compile(pat)
+		if err != nil {
+			fmt.Println("error:", err)
+			continue
+		}
+		fmt.Print("text> ")
+		t, _ := rdr.ReadString('\n')
+		t = t[:len(t)-1]
+		fmt.Println(r.FindAll(t))
+	}
+}
+// ===== cmd/regexviz/main.go =====
+package main
+
+import (
+	"bytes"
+	"flag"
+	"fmt"
+	"io"
+	"os"
+	"os/exec"
+
+	"lab2ta/regexlib"
+)
+
+func main() {
+	pattern := flag.String("re", "", "pattern (обязателен)")
+	dfaFlag := flag.Bool("dfa", true, "export minimal DFA (default)")
+	nfaFlag := flag.Bool("nfa", false, "export Thompson NFA")
+	rawFlag := flag.Bool("rawdfa", false, "export raw (non-minimized) DFA")
+	outFile := flag.String("o", "graph.dot", "output file")
+	pngFlag := flag.Bool("png", false, "render PNG via dot -Tpng")
+	flag.Parse()
+
+	if *nfaFlag {
+		*dfaFlag = false
+		*rawFlag = false
+	}
+	if *rawFlag {
+		*dfaFlag = false
+	}
+
+	if *pattern == "" {
+		fmt.Fprintln(os.Stderr, "usage: regexviz -re <pattern> [-dfa|-nfa|-rawdfa] [-o file] [-png]")
+		flag.PrintDefaults()
+		os.Exit(2)
+	}
+
+	re := regexlib.MustCompile(*pattern)
+
+	var buf bytes.Buffer
+	switch {
+	case *nfaFlag:
+		regexlib.ExportDOT(&buf, re.NFA())
+	case *rawFlag:
+		regexlib.ExportDOT(&buf, re.RawDFA())
+	default:
+		regexlib.ExportDOT(&buf, re.DFA())
+	}
+
+	if *pngFlag {
+		cmd := exec.Command("dot", "-Tpng", "-o", *outFile)
+		cmd.Stdin = bytes.NewReader(buf.Bytes())
+		cmd.Stderr = os.Stderr
+		if err := cmd.Run(); err != nil {
+			fmt.Fprintf(os.Stderr, "dot failed: %v\n", err)
+			os.Exit(1)
+		}
+		fmt.Printf("PNG written to %s\n", *outFile)
+		return
+	}
+
+	var w io.Writer
+	if *outFile == "-" {
+		w = os.Stdout
+	} else {
+		f, err := os.Create(*outFile)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "cannot create %s: %v\n", *outFile, err)
+			os.Exit(1)
+		}
+		defer f.Close()
+		w = f
+	}
+	_, _ = io.Copy(w, &buf)
+	if *outFile != "-" {
+		fmt.Printf("DOT written to %s\n", *outFile)
+	}
+}
