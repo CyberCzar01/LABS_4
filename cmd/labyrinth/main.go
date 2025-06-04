@@ -18,12 +18,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	script, err := os.ReadFile(os.Args[2])
 	data, err := os.ReadFile(os.Args[2])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	prog, err := interpreter.Parse(string(data))
+	prog, err := interpreter.Parse(string(script))
 	if err != nil {
 		log.Fatal(err)
 	}

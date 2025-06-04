@@ -2,6 +2,8 @@ package interpreter
 
 import (
 	"fmt"
+	"strconv"
+	"strings"
 
 	"github.com/alecthomas/participle/v2"
 	"github.com/alecthomas/participle/v2/lexer"
@@ -12,10 +14,17 @@ type Program struct {
 }
 
 type Statement struct {
-	Assign *Assign `parser:"@@ ';'"`
+	Decl   *Decl   `parser:"@@ ';'"`
+	Assign *Assign `parser:"| @@ ';'"`
 	Move   *Move   `parser:"| @@ ';'"`
 	Loop   *Loop   `parser:"| @@"`
 	If     *If     `parser:"| @@"`
+}
+
+type Decl struct {
+	Type string `parser:"@( 'seisu' | 'ronri' )"`
+	Name string `parser:"@Ident"`
+	Expr *Expr  `parser:"( '=' @@ )?"`
 }
 
 type Assign struct {
@@ -50,6 +59,46 @@ type OpTerm struct {
 }
 
 type Term struct {
+	Number *IntValue  `parser:"@Number"`
+	Bool   *BoolValue `parser:"| @Bool"`
+	Ident  *string    `parser:"| @Ident"`
+}
+
+type IntValue int
+
+func (i *IntValue) Capture(values []string) error {
+	s := values[0]
+	base := 10
+	if strings.HasPrefix(s, "x") || strings.HasPrefix(s, "X") {
+		base = 16
+		s = s[1:]
+	}
+	v, err := strconv.ParseInt(s, base, 64)
+	if err != nil {
+		return err
+	}
+	*i = IntValue(v)
+	return nil
+}
+
+type BoolValue bool
+
+func (b *BoolValue) Capture(values []string) error {
+	switch values[0] {
+	case "shinri":
+		*b = true
+	case "uso":
+		*b = false
+	default:
+		return fmt.Errorf("invalid bool %s", values[0])
+	}
+	return nil
+}
+
+var langLexer = lexer.MustSimple([]lexer.SimpleRule{
+	{Name: "Move", Pattern: `\^_\^|v_v|<_<|>_>|o_o|~_~`},
+	{Name: "Number", Pattern: `[-+]?(?:\d+|x[0-9A-F]+)`},
+	{Name: "Bool", Pattern: `shinri|uso`},
 	Number *int    `parser:"@Number"`
 	Ident  *string `parser:"| @Ident"`
 }
@@ -81,6 +130,16 @@ func (p *Program) Exec(ctx *Context) error {
 
 func (s *Statement) Exec(ctx *Context) error {
 	switch {
+	case s.Decl != nil:
+		val := 0
+		if s.Decl.Expr != nil {
+			var err error
+			val, err = s.Decl.Expr.Eval(ctx)
+			if err != nil {
+				return err
+			}
+		}
+		ctx.Env.Set(s.Decl.Name, val)
 	case s.Assign != nil:
 		val, err := s.Assign.Expr.Eval(ctx)
 		if err != nil {
@@ -155,7 +214,12 @@ func (e *Expr) Eval(ctx *Context) (int, error) {
 func (t *Term) Eval(ctx *Context) (int, error) {
 	switch {
 	case t.Number != nil:
-		return *t.Number, nil
+		return int(*t.Number), nil
+	case t.Bool != nil:
+		if bool(*t.Bool) {
+			return 1, nil
+		}
+		return 0, nil
 	case t.Ident != nil:
 		v, ok := ctx.Env.Get(*t.Ident)
 		if !ok {
