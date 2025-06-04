@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/alecthomas/participle/v2"
+	"github.com/alecthomas/participle/v2/lexer"
 )
 
 type Program struct {
@@ -23,7 +24,7 @@ type Assign struct {
 }
 
 type Move struct {
-	Dir string `parser:"@('^_^'|'v_v'|'<_<'|'>_>'|'o_o'|'~_~')"`
+	Dir string `parser:"@Move"`
 }
 
 type Loop struct {
@@ -49,11 +50,21 @@ type OpTerm struct {
 }
 
 type Term struct {
-	Number *int    `parser:"@Int"`
+	Number *int    `parser:"@Number"`
 	Ident  *string `parser:"| @Ident"`
 }
 
-var parser = participle.MustBuild[Program]()
+var langLexer = lexer.MustSimple([]lexer.SimpleRule{
+	{Name: "Move", Pattern: `\^_\^|v_v|<_<|>_>|o_o|~_~`},
+	{Name: "Number", Pattern: `\d+`},
+	{Name: "Ident", Pattern: `[a-zA-Z_][a-zA-Z0-9_]*`},
+	{Name: "Punct", Pattern: `[=;:+-]`},
+	{Name: "whitespace", Pattern: `\s+`},
+})
+
+var parser = participle.MustBuild[Program](
+	participle.Lexer(langLexer),
+)
 
 func Parse(data string) (*Program, error) {
 	return parser.ParseString("input", data)
