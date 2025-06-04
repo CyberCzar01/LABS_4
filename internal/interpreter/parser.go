@@ -99,6 +99,53 @@ var langLexer = lexer.MustSimple([]lexer.SimpleRule{
 	{Name: "Move", Pattern: `\^_\^|v_v|<_<|>_>|o_o|~_~`},
 	{Name: "Number", Pattern: `[-+]?(?:\d+|[xX][0-9A-F]+)`},
 	{Name: "Bool", Pattern: `shinri|uso`},
+}
+
+type BoolValue bool
+
+func (b *BoolValue) Capture(values []string) error {
+	switch values[0] {
+	case "shinri":
+		*b = true
+	case "uso":
+		*b = false
+	default:
+		return fmt.Errorf("invalid bool %s", values[0])
+	}
+	return nil
+}
+
+var langLexer = lexer.MustSimple([]lexer.SimpleRule{
+	{Name: "Move", Pattern: `\^_\^|v_v|<_<|>_>|o_o|~_~`},
+	{Name: "Number", Pattern: `[-+]?(?:\d+|[xX][0-9A-F]+)`},
+	{Name: "Bool", Pattern: `shinri|uso`},
+}
+
+type BoolValue bool
+
+func (b *BoolValue) Capture(values []string) error {
+	switch values[0] {
+	case "shinri":
+		*b = true
+	case "uso":
+		*b = false
+	default:
+		return fmt.Errorf("invalid bool %s", values[0])
+	}
+	return nil
+}
+
+var langLexer = lexer.MustSimple([]lexer.SimpleRule{
+	{Name: "Move", Pattern: `\^_\^|v_v|<_<|>_>|o_o|~_~`},
+	{Name: "Number", Pattern: `[-+]?(?:\d+|x[0-9A-F]+)`},
+	{Name: "Bool", Pattern: `shinri|uso`},
+	Number *int    `parser:"@Number"`
+	Ident  *string `parser:"| @Ident"`
+}
+
+var langLexer = lexer.MustSimple([]lexer.SimpleRule{
+	{Name: "Move", Pattern: `\^_\^|v_v|<_<|>_>|o_o|~_~`},
+	{Name: "Number", Pattern: `\d+`},
 	{Name: "Ident", Pattern: `[a-zA-Z_][a-zA-Z0-9_]*`},
 	{Name: "Punct", Pattern: `[=;:+-]`},
 	{Name: "whitespace", Pattern: `\s+`},
@@ -153,6 +200,9 @@ func (s *Statement) Exec(ctx *Context) error {
 			ctx.Robot.Move(0, 1, 0)
 		case "~_~":
 			ctx.Robot.Move(0, -1, 0)
+		}
+		if ctx.Lab != nil {
+			ctx.Lab.Display(ctx.Robot)
 		}
 	case s.Loop != nil:
 		start, err := s.Loop.From.Eval(ctx)
