@@ -1,0 +1,48 @@
+# macOS system files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Thumbnails
+._*
+
+# Spotlight
+.Spotlight-V100
+.Trashes
+
+# macOS folder attributes
+Icon?
+ehthumbs.db
+Thumbs.db
+
+# VSCode
+.vscode/
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Logs
+*.log
+
+# Archives
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# Node/npm
+node_modules/
+
+# System & temp files
+*.swp
+*.tmp
+*~
