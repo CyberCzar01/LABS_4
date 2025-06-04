@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -19,12 +18,13 @@ func main() {
 		log.Fatal(err)
 	}
 
-	data, err := ioutil.ReadFile(os.Args[2])
+	// load the program script from disk
+	scriptData, err := os.ReadFile(os.Args[2])
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	prog, err := interpreter.Parse(string(data))
+	prog, err := interpreter.Parse(string(scriptData))
 	if err != nil {
 		log.Fatal(err)
 	}
