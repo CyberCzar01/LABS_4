@@ -164,6 +164,21 @@ func (r *Regex) matchWithGroups(s string, starts, ends []int) int {
 				}
 			}
 		}
+                for st := range curr {
+                        for _, e := range st.edges {
+                                switch {
+                                case e.symbol == ch:
+                                        next[e.to] = struct{}{}
+                                case e.symbol == -1:
+                                        for _, r := range e.set {
+                                                if r == ch {
+                                                        next[e.to] = struct{}{}
+                                                        break
+                                                }
+                                        }
+                                }
+                        }
+                }
 
 		next = epsilonClosure(next)
 		if len(next) == 0 {

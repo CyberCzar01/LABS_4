@@ -50,9 +50,23 @@ func TestParserPrecedence(t *testing.T) {
 }
 
 func TestParserCharClass(t *testing.T) {
+
 	re := newRE(t, "[a-c]+")
 	acc(t, re, "abcabc", true)
 	acc(t, re, "d", false)
+
+        re := newRE(t, "[a-c]+")
+        acc(t, re, "abcabc", true)
+        acc(t, re, "d", false)
+}
+
+func TestFindAllCharClass(t *testing.T) {
+        re := newRE(t, "[a-c]")
+        text := "zabcx"
+        m := re.FindAll(text)
+        if len(m) != 3 || text[m[0].Start:m[0].End] != "a" || text[m[1].Start:m[1].End] != "b" || text[m[2].Start:m[2].End] != "c" {
+                t.Fatalf("unexpected matches %v", m)
+        }
 }
 
 // ------------------------------------------------------------------- NFA ←→ DFA
