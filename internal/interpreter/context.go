@@ -5,4 +5,5 @@ package interpreter
 type Context struct {
 	Env   *Environment
 	Robot *Robot
+	Lab   *Labyrinth
 }

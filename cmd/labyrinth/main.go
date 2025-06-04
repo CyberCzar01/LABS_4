@@ -19,6 +19,9 @@ func main() {
 	}
 
 	script, err := os.ReadFile(os.Args[2])
+
+	data, err := os.ReadFile(os.Args[2])
+
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -31,7 +34,7 @@ func main() {
 	env := interpreter.NewEnvironment()
 	robot := interpreter.NewRobot()
 	robot.X, robot.Y, robot.Z = lab.Start[0], lab.Start[1], lab.Start[2]
-	ctx := &interpreter.Context{Env: env, Robot: robot}
+	ctx := &interpreter.Context{Env: env, Robot: robot, Lab: lab}
 
 	if err := prog.Exec(ctx); err != nil {
 		log.Fatal(err)
