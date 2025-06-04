@@ -4,17 +4,12 @@ import "sort"
 
 // complement on complete DFA (assumes total transition function)
 func Complement(d *DFA) *DFA {
-	// shallow copy states first
-	newStates := make([]*dfaState, len(d.States))
-	for i, s := range d.States {
-		newStates[i] = &dfaState{id: i, accept: !s.accept, trans: map[rune]*dfaState{}}
+	d = cloneDFA(d)
+	d = completeDFA(d)
+	for _, s := range d.States {
+		s.accept = !s.accept
 	}
-	for i, s := range d.States {
-		for c, t := range s.trans {
-			newStates[i].trans[c] = newStates[t.id]
-		}
-	}
-	return &DFA{Start: newStates[d.Start.id], States: newStates, Alpha: d.Alpha}
+	return d
 }
 
 func Product(a, b *DFA, op func(bool, bool) bool) *DFA {
@@ -66,6 +61,14 @@ func unionRunes(a, b []rune) []rune {
 	return out
 }
 
+func asciiAlphabet() []rune {
+	out := make([]rune, 128)
+	for i := 0; i < 128; i++ {
+		out[i] = rune(i)
+	}
+	return out
+}
+
 // Intersection: op = &&
 func IntersectDFA(a, b *DFA) *DFA { return Product(a, b, func(x, y bool) bool { return x && y }) }
 
@@ -74,29 +77,54 @@ func UnionDFA(a, b *DFA) *DFA { return Product(a, b, func(x, y bool) bool { retu
 
 // Reverse language: make NFA by reversing edges then determinise
 func ReverseDFA(d *DFA) *DFA {
-	// build reverse NFA
 	nodes := make([]*nfaState, len(d.States))
 	for i := range nodes {
 		nodes[i] = newState()
 	}
 	start := newState()
-	acceptSet := map[*nfaState]struct{}{}
 	for _, s := range d.States {
 		if s.accept {
-			acceptSet[nodes[s.id]] = struct{}{}
+			start.edges = append(start.edges, &nfaEdge{symbol: 0, to: nodes[s.id]})
 		}
 	}
-	// ε from new start to each accept of original
-	for acc := range acceptSet {
-		start.edges = append(start.edges, &nfaEdge{symbol: 0, to: acc})
-	}
-	// reverse transitions
 	for _, s := range d.States {
 		for c, to := range s.trans {
 			nodes[to.id].edges = append(nodes[to.id].edges, &nfaEdge{symbol: c, to: nodes[s.id]})
 		}
 	}
-	acceptDummy := newState()
-	acceptDummy.accept = true
-	return nfaToDFA(start, acceptDummy, d.Alpha)
+	nodes[d.Start.id].accept = true
+	dfa := nfaToDFAcore(start, d.Alpha)
+	dfa.Alpha = d.Alpha
+	return Minimize(dfa)
+}
+
+// cloneDFA создает глубокую копию автомата.
+func cloneDFA(d *DFA) *DFA {
+	states := make([]*dfaState, len(d.States))
+	for i, s := range d.States {
+		states[i] = &dfaState{id: i, accept: s.accept, trans: map[rune]*dfaState{}}
+	}
+	for i, s := range d.States {
+		for c, t := range s.trans {
+			states[i].trans[c] = states[t.id]
+		}
+	}
+	return &DFA{Start: states[d.Start.id], States: states, Alpha: append([]rune(nil), d.Alpha...)}
+}
+
+// completeDFA добавляет поглощающее состояние для отсутствующих переходов.
+func completeDFA(d *DFA) *DFA {
+	sink := &dfaState{id: len(d.States), trans: map[rune]*dfaState{}}
+	for _, c := range d.Alpha {
+		sink.trans[c] = sink
+	}
+	for _, s := range d.States {
+		for _, c := range d.Alpha {
+			if _, ok := s.trans[c]; !ok {
+				s.trans[c] = sink
+			}
+		}
+	}
+	d.States = append(d.States, sink)
+	return d
 }

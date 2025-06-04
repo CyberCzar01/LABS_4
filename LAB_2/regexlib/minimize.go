@@ -116,8 +116,18 @@ func Minimize(d *DFA) *DFA {
 		uniq = append(uniq, s)
 	}
 
+	// перенумеруем состояния последовательно
+	for i, s := range uniq {
+		s.id = i
+	}
+	for _, s := range uniq {
+		for c, to := range s.trans {
+			s.trans[c] = uniq[to.id]
+		}
+	}
+
 	return &DFA{
-		Start:  representative[d.Start],
+		Start:  uniq[representative[d.Start].id],
 		States: uniq,
 		Alpha:  d.Alpha,
 	}

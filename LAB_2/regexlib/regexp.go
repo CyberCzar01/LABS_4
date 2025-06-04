@@ -100,6 +100,16 @@ type Match struct {
 
 // FindSubmatchAt ищет ближайшее совпадение, начиная с pos.
 func (r *Regex) FindSubmatchAt(text string, pos int) ([]string, int) {
+	// Если NFA недоступен (Regex получен через операции над DFA),
+	// используем простую симуляцию DFA без поддержки групп.
+	if r.nfaStart == nil {
+		l := r.matchDFA(text[pos:])
+		if l == 0 {
+			return nil, 0
+		}
+		return []string{text[pos : pos+l]}, l
+	}
+
 	G := r.numGroups
 	starts := make([]int, G+1)
 	ends := make([]int, G+1)
@@ -143,53 +153,93 @@ func (r *Regex) FindAll(text string) []Match {
 /* ------------------- внутренняя симуляция NFA ------------------------- */
 
 func (r *Regex) matchWithGroups(s string, starts, ends []int) int {
-	pos := 0
-	curr := epsilonClosure(map[*nfaState]struct{}{r.nfaStart: {}})
+	runes := []rune(s)
 
-	// отметим группы, открывающиеся из ε-переходов старта
-	for st := range curr {
-		for _, g := range st.openGroups {
-			starts[g] = pos
-		}
+	type item struct {
+		st     *nfaState
+		pos    int // index in runes
+		starts []int
+		ends   []int
 	}
 
-	for pos < len(s) {
-		ch, sz := utf8.DecodeRuneInString(s[pos:])
-		next := map[*nfaState]struct{}{}
+	enqueue := func(q *[]item, it item) {
+		*q = append(*q, it)
+	}
 
-		for st := range curr {
-			for _, e := range st.edges {
-				if e.symbol == ch {
-					next[e.to] = struct{}{}
+	// initial closure
+	initStarts := append([]int(nil), starts...)
+	initEnds := append([]int(nil), ends...)
+	startItems := []item{{st: r.nfaStart, pos: 0, starts: initStarts, ends: initEnds}}
+	queue := startItems
+	visited := make(map[[2]int]bool) // state id + pos
+
+	bestLen := 0
+	var bestStarts, bestEnds []int
+
+	for len(queue) > 0 {
+		it := queue[0]
+		queue = queue[1:]
+
+		if visited[[2]int{it.st.id, it.pos}] {
+			continue
+		}
+		visited[[2]int{it.st.id, it.pos}] = true
+
+		// apply group markers when entering state
+		for _, g := range it.st.openGroups {
+			it.starts[g] = it.pos
+		}
+		for _, g := range it.st.closeGroups {
+			it.ends[g] = it.pos
+		}
+
+		if it.st.accept {
+			if it.pos > bestLen {
+				bestLen = it.pos
+				bestStarts = append([]int(nil), it.starts...)
+				bestEnds = append([]int(nil), it.ends...)
+			}
+		}
+
+		for _, e := range it.st.edges {
+			switch {
+			case e.symbol == 0:
+				enqueue(&queue, item{st: e.to, pos: it.pos, starts: append([]int(nil), it.starts...), ends: append([]int(nil), it.ends...)})
+			case e.symbol == -1:
+				if it.pos < len(runes) {
+					ch := runes[it.pos]
+					for _, r := range e.set {
+						if r == ch {
+							enqueue(&queue, item{st: e.to, pos: it.pos + 1, starts: append([]int(nil), it.starts...), ends: append([]int(nil), it.ends...)})
+							break
+						}
+					}
+				}
+			case e.symbol == -2:
+				grp := int(e.set[0])
+				sub := runes[it.starts[grp]:it.ends[grp]]
+				if len(sub) == 0 {
+					enqueue(&queue, item{st: e.to, pos: it.pos, starts: append([]int(nil), it.starts...), ends: append([]int(nil), it.ends...)})
+				} else if it.pos+len(sub) <= len(runes) {
+					if equalRuneSlice(runes[it.pos:it.pos+len(sub)], sub) {
+						enqueue(&queue, item{st: e.to, pos: it.pos + len(sub), starts: append([]int(nil), it.starts...), ends: append([]int(nil), it.ends...)})
+					}
+				}
+			default:
+				if it.pos < len(runes) && runes[it.pos] == e.symbol {
+					enqueue(&queue, item{st: e.to, pos: it.pos + 1, starts: append([]int(nil), it.starts...), ends: append([]int(nil), it.ends...)})
 				}
 			}
 		}
-
-		next = epsilonClosure(next)
-		if len(next) == 0 {
-			break
-		}
-
-		pos += sz
-		curr = next
-
-		for st := range curr {
-			for _, g := range st.openGroups {
-				// --- исправленное смещение ---
-				starts[g] = pos
-			}
-			for _, g := range st.closeGroups {
-				ends[g] = pos
-			}
-		}
 	}
 
-	for st := range curr {
-		if st.accept {
-			return pos
-		}
+	if bestLen > 0 {
+		copy(starts, bestStarts)
+		copy(ends, bestEnds)
 	}
-	return 0
+
+	// convert rune index to byte length
+	return len(string(runes[:bestLen]))
 }
 
 /* ----------- Сервисные геттеры --------------------------------------- */
@@ -215,4 +265,109 @@ func countGroups(n *astNode) int {
 		max = m
 	}
 	return max
+}
+
+// -------------------- вспомогательные для DFA-базовых Regex ------------
+
+// regexFromDFA создаёт Regex только по автомату. Группы и AST отсутствуют,
+// поэтому поддерживается лишь поиск совпадений без захватывающих групп.
+func regexFromDFA(d *DFA) *Regex {
+	min := Minimize(d)
+	min.Alpha = d.Alpha
+	return &Regex{dfa: min, rawDFA: d, alphabet: min.Alpha}
+}
+
+func equalRuneSlice(a, b []rune) bool {
+	if len(a) != len(b) {
+		return false
+	}
+	for i := range a {
+		if a[i] != b[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// matchDFA возвращает длину наибольшего префикса строки, принимаемого DFA.
+func (r *Regex) matchDFA(s string) int {
+	if r.dfa == nil {
+		return 0
+	}
+	state := r.dfa.Start
+	lastAccept := -1
+	pos := 0
+	for pos < len(s) {
+		ch, sz := utf8.DecodeRuneInString(s[pos:])
+		next, ok := state.trans[ch]
+		if !ok {
+			break
+		}
+		pos += sz
+		state = next
+		if state.accept {
+			lastAccept = pos
+		}
+	}
+	if lastAccept >= 0 {
+		return lastAccept
+	}
+	return 0
+}
+
+// Complement возвращает Regex, распознающий дополнение языка исходного DFA.
+func (r *Regex) Complement() *Regex {
+	d := cloneDFA(r.dfa)
+	d.Alpha = unionRunes(d.Alpha, asciiAlphabet())
+	d = completeDFA(d)
+	for _, s := range d.States {
+		s.accept = !s.accept
+	}
+	return regexFromDFA(d)
+}
+
+// Intersect возвращает Regex, распознающий пересечение языков двух DFA.
+func (r *Regex) Intersect(o *Regex) *Regex {
+	d := IntersectDFA(r.dfa, o.dfa)
+	return regexFromDFA(d)
+}
+
+// Reverse строит Regex, распознающий развёрнутый язык исходного DFA.
+func (r *Regex) Reverse() *Regex {
+	revAST := reverseAST(r.ast)
+	start, _ := compileASTtoNFA(revAST)
+	dfa := nfaToDFAcore(start, r.alphabet)
+	dfa.Alpha = r.alphabet
+	return regexFromDFA(dfa)
+}
+
+func reverseAST(n *astNode) *astNode {
+	if n == nil {
+		return nil
+	}
+	switch n.typ {
+	case nConcat:
+		return &astNode{typ: nConcat, left: reverseAST(n.right), right: reverseAST(n.left)}
+	case nUnion:
+		return &astNode{typ: nUnion, left: reverseAST(n.left), right: reverseAST(n.right)}
+	case nStar, nPlus, nQMark:
+		return &astNode{typ: n.typ, left: reverseAST(n.left)}
+	case nRepeat:
+		return &astNode{typ: nRepeat, left: reverseAST(n.left), min: n.min, max: n.max}
+	case nGroup:
+		return &astNode{typ: nGroup, left: reverseAST(n.left), grpNum: n.grpNum}
+	default:
+		cp := *n
+		cp.left = nil
+		cp.right = nil
+		return &cp
+	}
+}
+
+// ToRegexp восстанавливает регулярное выражение из минимального DFA.
+func (r *Regex) ToRegexp() string {
+	if r.dfa == nil {
+		return ""
+	}
+	return r.dfa.ToRegexp()
 }
