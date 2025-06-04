@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 
@@ -19,7 +18,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	data, err := ioutil.ReadFile(os.Args[2])
+	data, err := os.ReadFile(os.Args[2])
 	if err != nil {
 		log.Fatal(err)
 	}
