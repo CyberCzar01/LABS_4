@@ -1,0 +1,67 @@
+# файл: find_exit.kd
+# Пример поиска выхода «правой рукой»
+
+seisu i_steps = 0;
+ronri found_exit = uso;
+rippotai start_pos;
+
+hairetsu dirs = { o_0, >_0, ~_0, <_0, ^_0, v_0 };
+seisu orientation = 0;  # 0..5
+
+ronri is_exit(rippotai cur) kido
+    seisu j = 0;
+    shuki j = 0 : exit_count-1 kido
+        ruikei { cur.x exits[j].x }
+        ruikei { cur.y exits[j].y }
+        ruikei { cur.z exits[j].z }
+        sorenara shinri kido
+            return shinri;
+        shushi
+    shushi
+    return uso;
+shushi;
+
+{
+    shuki i_steps = 0 : 100000 kido
+        start_pos = *_*;
+        sorenara is_exit(start_pos) kido
+            found_exit = shinri;
+            break;
+        shushi
+
+        seisu trial = 0;
+        shuki trial = 0 : 5 kido
+            seisu idx = (orientation + trial) % 6;
+            seisu dist = 0;
+
+            sorenara idx == 0 kido dist = o_0; shushi;
+            sorenara idx == 1 kido dist = >_0; shushi;
+            sorenara idx == 2 kido dist = ~_0; shushi;
+            sorenara idx == 3 kido dist = <_0; shushi;
+            sorenara idx == 4 kido dist = ^_0; shushi;
+            sorenara idx == 5 kido dist = v_0; shushi;
+
+            sorenara dist > 0 kido
+                orientation = idx;
+                sorenara idx == 0 kido o_o; shushi;
+                sorenara idx == 1 kido >_>; shushi;
+                sorenara idx == 2 kido ~_~; shushi;
+                sorenara idx == 3 kido <_<; shushi;
+                sorenara idx == 4 kido ^_^; shushi;
+                sorenara idx == 5 kido v_v; shushi;
+                break;
+            shushi
+        shushi
+    shushi
+
+    rippotai final_pos = *_*;
+    sorenara found_exit kido
+        printf("Выход найден в (%d,%d,%d)\n", final_pos.x, final_pos.y, final_pos.z);
+    shushi
+    sorenara broken kido
+        printf("Робот сломался в (%d,%d,%d)\n", final_pos.x, final_pos.y, final_pos.z);
+    shushi
+    sorenara i_steps >= 100000 kido
+        printf("Превышено число шагов, выхода не найдено.\n");
+    shushi
+}
