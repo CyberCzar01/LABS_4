@@ -256,7 +256,7 @@ def p_simple_func_call(p):
 
 def p_block_stmt(p):
     'block_stmt : LBRACE stmt_list RBRACE'
-    p[0] = BlockNode(p[2)]
+    p[0] = BlockNode(p[2])
 
 def p_stmt_list_empty(p):
     'stmt_list : '

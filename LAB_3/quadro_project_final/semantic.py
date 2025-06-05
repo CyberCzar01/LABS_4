@@ -10,8 +10,15 @@
 from __future__ import annotations
 
 from typing import Dict, List, Optional
-from . import ast
-from .runtime import IntVal, BoolVal, ArrayVal, CellVal, FunctionVal
+import importlib.util
+import os
+import sys
+
+if __package__:
+    from .runtime import IntVal, BoolVal, ArrayVal, CellVal, FunctionVal
+else:
+    from runtime import IntVal, BoolVal, ArrayVal, CellVal, FunctionVal
+
 
 
 # ------------------ типы на уровне языка --------------------------------
@@ -67,6 +74,17 @@ class Scope:
 class SemanticError(Exception):
     pass
 
+
+# import local ast module after defining SemanticError to avoid circular import
+if __package__:
+    from . import ast
+else:
+    module_path = os.path.join(os.path.dirname(__file__), 'ast.py')
+    spec = importlib.util.spec_from_file_location('quadro_ast', module_path)
+    ast = importlib.util.module_from_spec(spec)
+    sys.modules['quadro_ast'] = ast
+    sys.modules['ast'] = ast
+    spec.loader.exec_module(ast)
 
 # ------------------ главный проход -------------------------------------
 def check(program: ast.Program):
@@ -194,3 +212,7 @@ def require_assignable(dst: str, src: str, msg: str):
     if dst == BOOL and src == INT:
         return
     raise SemanticError(msg)
+
+
+# Backwards compatibility with parser expectations
+semantic_check = check

@@ -7,12 +7,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import List, Optional, Any, Iterator
 
-from .runtime import (
+from runtime import (
     IntVal, BoolVal, CellVal, ArrayVal,
-    Environment, FunctionVal
+    Environment, FunctionVal, Robot, MEAS_DIR
 )
-from .robot import Robot, MEAS_DIR
-from .semantic import SemanticError
+from semantic import SemanticError
 
 
 # --------------------- Базовый класс всех узлов -----------------------
@@ -391,7 +390,7 @@ class FuncCall(Node):
 #  Помощник для expr_type в семантике
 # ----------------------------------------------------------------------
 def expr_type(node: Node) -> str:
-    from .semantic import INT, BOOL, CELL, ARRAY, FUNC
+    from semantic import INT, BOOL, CELL, ARRAY, FUNC
     if isinstance(node, IntLit):        return INT
     if isinstance(node, BoolLit):       return BOOL
     if isinstance(node, CellLit):       return CELL
