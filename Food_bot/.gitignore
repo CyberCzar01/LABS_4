@@ -1,0 +1,44 @@
+# ---- Python / Aiogram FoodBot ----
+
+# compiled bytecode
+__pycache__/
+*.py[cod]
+*.so
+
+# virtual environments
+venv/
+.venv/
+
+# local settings / secrets
+.env
+*.env
+
+# databases
+*.db
+
+# runtime artefacts (отчёты, временные файлы)
+order_summary_*.txt
+order_distribution_*.xlsx
+poll_results_*.csv
+
+# logs
+*.log
+
+# build / packaging
+build/
+dist/
+*.egg-info/
+
+# test / coverage
+htmlcov/
+.coverage
+.tox/
+.pytest_cache/
+
+# IDE / editor configs
+.idea/
+.vscode/
+
+# OS junk
+.DS_Store
+Thumbs.db 
