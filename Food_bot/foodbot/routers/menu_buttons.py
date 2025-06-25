@@ -51,16 +51,8 @@ async def _get_active_menu(chat_id: int):
 
 async def _make_order(call: types.CallbackQuery, idx: int, menu):
     async with get_session() as session:
-        # Если пользователь уже подтвердил заказ – правки запрещены
-        user_res_chk = await session.exec(select(User).where(User.tg_id == call.from_user.id))
-        dbu_chk = user_res_chk.first()
-        if dbu_chk:
-            final_exists_res = await session.exec(
-                select(Order).where(Order.user_id == dbu_chk.id, Order.menu_id == menu.id, Order.is_final == True)  # noqa: E712
-            )
-            if final_exists_res.first():
-                await call.answer("Заказ уже подтверждён", show_alert=True)
-                return
+        # Раньше здесь блокировали изменения после подтверждения. Теперь разрешаем
+        # редактировать заказ до закрытия меню, поэтому проверку убрали.
 
         item_res = await session.exec(
             select(MenuItem).where(MenuItem.menu_id == menu.id, MenuItem.button_index == idx)
@@ -111,13 +103,7 @@ async def _cancel_order(call: types.CallbackQuery):
             await call.answer("Нет заказа", show_alert=True)
             return
 
-        # Проверяем финальный статус
-        final_orders_res = await session.exec(
-            select(Order).where(Order.user_id == db_user.id, Order.menu_id == menu.id, Order.is_final == True)  # noqa: E712
-        )
-        if final_orders_res.first():
-            await call.answer("Заказ уже подтверждён — изменения невозможны", show_alert=True)
-            return
+        # Раньше здесь блокировали отмену подтверждённого заказа. Теперь позволяем.
 
         all_item_res = await session.exec(select(MenuItem.meal_id).where(MenuItem.menu_id == menu.id))
         meal_ids_in_menu = list(all_item_res)
@@ -184,9 +170,7 @@ async def cb_menu_preview(call: types.CallbackQuery):
             await call.answer("Вы ничего не выбрали", show_alert=True)
             return
 
-        if any(o.is_final for o in user_orders):
-            await call.answer("Вы уже подтвердили заказ", show_alert=True)
-            return
+        # Разрешаем открывать предпросмотр повторно, даже если заказ подтверждён.
 
         meals_res = await session.exec(select(Meal).where(Meal.id.in_([o.meal_id for o in user_orders])).options(selectinload(Meal.canteen)))
         id2title = {m.id: m.title for m in meals_res}
@@ -196,7 +180,7 @@ async def cb_menu_preview(call: types.CallbackQuery):
 
     kb = types.InlineKeyboardMarkup(
         inline_keyboard=[
-            [types.InlineKeyboardButton(text="✅ Подтвердить", callback_data=f"menu_confirm:{menu.id}")],
+            [types.InlineKeyboardButton(text="✅ Сохранить заказ", callback_data=f"menu_confirm:{menu.id}")],
             [types.InlineKeyboardButton(text="⬅️ Вернуться", callback_data="menu_back")],
         ]
     )
@@ -232,21 +216,15 @@ async def cb_menu_confirm(call: types.CallbackQuery):
             await call.answer("Нет заказов", show_alert=True)
             return
 
-        if any(o.is_final for o in user_orders):
-            await call.answer("Уже подтверждено", show_alert=True)
-            return
-
         for o in user_orders:
             o.is_final = True
         await session.commit()
 
-    # убираем клавиатуру меню
-    try:
-        await call.message.edit_reply_markup(reply_markup=None)
-    except Exception:
-        pass
+    # Сообщаем и предлагаем кнопку «✏️ Изменить»
+    edit_kb = types.InlineKeyboardMarkup(inline_keyboard=[[types.InlineKeyboardButton(text="✏️ Изменить заказ", callback_data="menu_back")]])
+    await call.message.answer("✅ Заказ сохранён! При необходимости вы можете изменить его до дедлайна.", reply_markup=edit_kb)
 
-    await call.answer("✅ Заказ подтверждён! Изменить его теперь нельзя.", show_alert=True)
+    await call.answer("Заказ сохранён", show_alert=True)
 
 
 #  Вернуться к выбору
@@ -340,7 +318,7 @@ async def cb_menu_choose_canteen(call: types.CallbackQuery):
         types.InlineKeyboardButton(text="🤷‍♂️ Отменить выбор", callback_data="menu_cancel"),
     ])
     kb_rows.append([
-        types.InlineKeyboardButton(text="✅ Сделать заказ", callback_data="menu_submit"),
+        types.InlineKeyboardButton(text="✅ Сохранить заказ", callback_data="menu_submit"),
     ])
 
     # Изменяем текст и клавиатуру
@@ -384,7 +362,7 @@ async def cb_menu_back_to_canteens(call: types.CallbackQuery):
         types.InlineKeyboardButton(text="🤷‍♂️ Отменить выбор", callback_data="menu_cancel"),
     ])
     kb_rows.append([
-        types.InlineKeyboardButton(text="✅ Сделать заказ", callback_data="menu_submit"),
+        types.InlineKeyboardButton(text="✅ Сохранить заказ", callback_data="menu_submit"),
     ])
 
     new_text = "Выберите столовую:"  # текст для верхнего сообщения
