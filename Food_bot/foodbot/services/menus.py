@@ -29,7 +29,7 @@ async def create_menu(*, bot: Bot, chat_id: int, deadline: datetime, meal_ids: S
     if not meals:
         raise ValueError("no_meals")
 
-    tz = ZoneInfo(settings.timezone)
+    tz = settings.tz
     dl_local = deadline.astimezone(tz)
     text_lines = [
         f"🍽️ Заказ на {dl_local.strftime('%d.%m')} (до {dl_local.strftime('%H:%M')})",

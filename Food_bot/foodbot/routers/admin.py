@@ -694,8 +694,7 @@ async def menu_set_deadline(message: types.Message, state: FSMContext, bot: Bot)
         await message.reply("Неверный формат времени. Используйте HH:MM, напр. 16:00")
         return
 
-    from zoneinfo import ZoneInfo
-    tz = ZoneInfo(settings.timezone)
+    tz = settings.tz
 
     now_local = datetime.now(tz)
     deadline_local = now_local.replace(hour=hour, minute=minute, second=0, microsecond=0)

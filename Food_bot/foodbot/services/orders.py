@@ -68,7 +68,7 @@ async def build_report(date: datetime) -> Tuple[str, BytesIO]:
         user_name = order.user.full_name if order.user else f"tg:{order.user_id}"
         meal_title = order.meal.title if order.meal else f"meal:{order.meal_id}"
         canteen_title = order.meal.canteen.title if order.meal and order.meal.canteen else "—"
-        tz = ZoneInfo(settings.timezone)
+        tz = settings.tz
         local_time = order.created_at.replace(tzinfo=timezone.utc).astimezone(tz)
         ws_orders.append([
             user_name,
@@ -125,7 +125,7 @@ async def build_menu_report(menu_id: int) -> Tuple[str, BytesIO]:
         user_name = order.user.full_name if order.user else f"tg:{order.user_id}"
         meal_title = order.meal.title if order.meal else f"meal:{order.meal_id}"
         canteen_title = order.meal.canteen.title if order.meal and order.meal.canteen else "—"
-        tz = ZoneInfo(settings.timezone)
+        tz = settings.tz
         local_time = order.created_at.replace(tzinfo=timezone.utc).astimezone(tz)
         ws_orders.append([
             user_name,
