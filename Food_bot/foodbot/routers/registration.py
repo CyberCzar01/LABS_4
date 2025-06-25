@@ -131,11 +131,25 @@ async def callback_approve(call: types.CallbackQuery, bot: Bot) -> None:  # noqa
         user = result.first()
         if not user:
             await call.answer("Пользователь не найден", show_alert=True)
+            # Уберём кнопки, чтобы другие админы не пытались снова
+            await call.message.edit_reply_markup(reply_markup=None)
             return
+
+        if user.is_approved:
+            await call.answer("Уже подтверждён", show_alert=True)
+            await call.message.edit_reply_markup(reply_markup=None)
+            return
+
         user.is_approved = True
         await session.commit()
 
-    await bot.send_message(user_id, "🎉 Ваш аккаунт подтверждён! Теперь вы можете участвовать в заказах.")
+    # Уведомляем пользователя
+    try:
+        await bot.send_message(user_id, "🎉 Ваш аккаунт подтверждён! Теперь вы можете участвовать в заказах.")
+    except Exception:
+        pass
+
+    # Убираем кнопки в сообщении, чтобы остальные админы не нажимали
     await call.message.edit_reply_markup(reply_markup=None)
     await call.answer("Пользователь подтверждён")
 
@@ -148,10 +162,24 @@ async def callback_reject(call: types.CallbackQuery, bot: Bot) -> None:  # noqa:
     async with get_session() as session:
         result = await session.exec(select(User).where(User.tg_id == user_id))
         user = result.first()
-        if user:
-            await session.delete(user)
-            await session.commit()
 
-    await bot.send_message(user_id, "😔 К сожалению, ваша заявка была отклонена.")
+        if not user:
+            await call.answer("Заявка уже удалена", show_alert=True)
+            await call.message.edit_reply_markup(reply_markup=None)
+            return
+
+        if user.is_approved:
+            await call.answer("Пользователь уже подтверждён другим админом", show_alert=True)
+            await call.message.edit_reply_markup(reply_markup=None)
+            return
+
+        await session.delete(user)
+        await session.commit()
+
+    try:
+        await bot.send_message(user_id, "😔 К сожалению, ваша заявка была отклонена.")
+    except Exception:
+        pass
+
     await call.message.edit_reply_markup(reply_markup=None)
     await call.answer("Отклонено") 
