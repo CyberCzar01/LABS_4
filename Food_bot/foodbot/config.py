@@ -12,7 +12,7 @@ class Settings(BaseSettings):
     timezone: str = Field("Europe/Moscow", env="TIMEZONE")  # IANA TZ
 
     class Config:
-        env_file = "example.env"
+        env_file = ".env"
         env_file_encoding = "utf-8"
 
 
