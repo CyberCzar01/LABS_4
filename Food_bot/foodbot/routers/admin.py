@@ -364,13 +364,21 @@ async def meal_add_complex(message: types.Message, state: FSMContext):
     # Убираем временную клавиатуру выбора типа блюда
     await message.answer(f"✅ Блюдо «{title}» добавлено.", reply_markup=types.ReplyKeyboardRemove())
 
-    # Возвращаем кнопки: inline-панель и reply-кнопку «Админ» для быстрого доступа
-    await message.answer("Панель администратора", reply_markup=_build_admin_kb())
+    # Показываем обновлённый список блюд текущей столовой,
+    # чтобы админ мог добавлять дальше, не возвращаясь в главное меню
+    if canteen_id is not None:
+        from types import SimpleNamespace
 
-    admin_rkb = types.ReplyKeyboardMarkup(
-        keyboard=[[types.KeyboardButton(text="Админ")]], resize_keyboard=True
-    )
-    await message.answer("\u2060", reply_markup=admin_rkb)
+        async def _dummy_answer(*args, **kwargs):
+            return None
+
+        fake_call = SimpleNamespace(
+            message=message,
+            from_user=message.from_user,
+            data=f"canteen:{canteen_id}",
+            answer=_dummy_answer,
+        )
+        await callback_canteen_meals(fake_call, state)  # type: ignore[arg-type]
 
     await state.clear()
 
