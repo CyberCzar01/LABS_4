@@ -41,7 +41,14 @@ async def create_menu(*, bot: Bot, chat_id: int, deadline: datetime, meal_ids: S
             prefix = ""
             if meal.canteen:
                 prefix = f"{meal.canteen.title} — "
-            text_lines.append(f"{idx}. {prefix}{meal.title}")
+
+            # Для обычных блюд (не комплексных) добавляем описание в скобках, если оно есть,
+            # чтобы различать позиции с одинаковым названием.
+            title_part = meal.title
+            if not meal.is_complex and meal.description:
+                title_part = f"{meal.title} ({meal.description})"
+
+            text_lines.append(f"{idx}. {prefix}{title_part}")
     text = "\n".join(text_lines)
 
     # === Формируем клавиатуру ===
@@ -79,7 +86,14 @@ async def create_menu(*, bot: Bot, chat_id: int, deadline: datetime, meal_ids: S
         # Одна столовая - показываем блюда напрямую, как раньше
         kb_rows: list[list[types.InlineKeyboardButton]] = []
         for idx, meal in enumerate(meals):
-            select_btn = types.InlineKeyboardButton(text=meal.title, callback_data=f"menu:{idx}")
+            label = meal.title
+            if not meal.is_complex and meal.description:
+                label = f"{meal.title} ({meal.description})"
+                # Ограничим длину, чтобы кнопка не была слишком широкой
+                if len(label) > 60:
+                    label = label[:57] + "…"
+
+            select_btn = types.InlineKeyboardButton(text=label, callback_data=f"menu:{idx}")
             info_btn = types.InlineKeyboardButton(text="ℹ️", callback_data=f"menuinfo:{idx}")
             kb_rows.append([select_btn, info_btn])
         markup = types.InlineKeyboardMarkup(inline_keyboard=_manage_rows(kb_rows))
@@ -165,7 +179,12 @@ async def _format_summary(menu: DailyMenu) -> list[str]:
 
     async with get_session() as session:
         meals_res = await session.exec(select(Meal).where(Meal.id.in_(summary.keys())))
-        id_to_title = {m.id: m.title for m in meals_res}
+        id_to_title: dict[int, str] = {}
+        for m in meals_res:
+            title = m.title
+            if not m.is_complex and m.description:
+                title = f"{m.title} ({m.description})"
+            id_to_title[m.id] = title
 
     return [f"• {id_to_title[mid]} — {cnt} шт." for mid, cnt in summary.items()]
 
