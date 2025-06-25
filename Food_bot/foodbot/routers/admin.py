@@ -786,6 +786,7 @@ def _build_admin_kb() -> types.InlineKeyboardMarkup:
         [types.InlineKeyboardButton(text="🗳️ Опрос", callback_data="start_menu")],
         [types.InlineKeyboardButton(text="🏁 Завершить опрос", callback_data="menu_close")],
         [types.InlineKeyboardButton(text="📊 Отчёт (сегодня)", callback_data="report_today")],
+        [types.InlineKeyboardButton(text="🍽️ Еда готова", callback_data="food_ready")],
     ]
     return types.InlineKeyboardMarkup(inline_keyboard=rows)
 
@@ -1040,4 +1041,59 @@ async def callback_menu_cant_reset(call: types.CallbackQuery, state: FSMContext)
     await state.update_data(sel_cids=[])
     # Перерисовать
     new_call = call.model_copy(update={"data": "start_menu_redraw"})
-    await callback_start_menu_redraw(new_call, state)  # type: ignore[arg-type] 
+    await callback_start_menu_redraw(new_call, state)  # type: ignore[arg-type]
+
+
+# ======= Уведомление «Еда готова» =======
+
+
+@admin_router.callback_query(lambda c: c.data == "food_ready")
+async def callback_food_ready(call: types.CallbackQuery, bot: Bot):
+    """Оповещает всех пользователей, сделавших заказ в последнем закрытом меню."""
+    if not await _is_admin(call.from_user.id, call.from_user.username):
+        await call.answer("Нет прав", show_alert=True)
+        return
+
+    from foodbot.models import DailyMenu, MenuItem, Order
+
+    async with get_session() as session:
+        # Находим последнее ЗАКРЫТОЕ основное меню
+        res = await session.exec(
+            select(DailyMenu)
+            .where(DailyMenu.is_primary == True, DailyMenu.is_closed == True)  # noqa: E712
+            .order_by(DailyMenu.id.desc())
+        )
+        last_menu = res.first()
+
+        if not last_menu:
+            await call.answer("Нет закрытого меню", show_alert=True)
+            return
+
+        # Определяем список menu_id: первичное + копии
+        child_res = await session.exec(select(DailyMenu.id).where(DailyMenu.parent_id == last_menu.id))
+        menu_ids = [last_menu.id] + list(child_res)
+
+        # Собираем уникальные tg_id пользователей с финальными заказами в этих меню
+        orders_res = await session.exec(
+            select(Order.user_id, User.tg_id).join(User).where(
+                Order.menu_id.in_(menu_ids),
+                Order.is_final == True,  # noqa: E712
+            )
+        )
+        tg_ids = {tg_id for _, tg_id in orders_res}
+
+    if not tg_ids:
+        await call.answer("Нет подтверждённых заказов", show_alert=True)
+        return
+
+    notify_text = "🍽️ Обеды готовы! Приятного аппетита!"
+
+    sent = 0
+    for uid in tg_ids:
+        try:
+            await bot.send_message(uid, notify_text)
+            sent += 1
+        except Exception:  # noqa: BLE001
+            continue
+
+    await call.answer(f"Уведомлено: {sent} чел.") 
