@@ -124,6 +124,9 @@ async def callback_list_canteens(call: types.CallbackQuery, state: FSMContext):
         # Текстовое представление списка столовых для отправки сообщением
         rows = [f"{c.id}. {c.title} {'(🔴)' if not c.is_active else ''}" for c in canteens]
 
+    # Кнопка «Добавить столовую» перед навигацией
+    kb_rows.append([types.InlineKeyboardButton(text="➕ Добавить столовую", callback_data="canteen_add")])
+
     # Добавляем навигацию
     kb_rows.append([types.InlineKeyboardButton(text="⬅️ Назад", callback_data="admin")])
     kb_rows.append(_home_row())
