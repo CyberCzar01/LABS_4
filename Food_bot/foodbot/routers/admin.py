@@ -176,7 +176,10 @@ async def canteen_add_title(message: types.Message, state: FSMContext):
     # Показываем обновлённый список столовых, чтобы админ мог продолжить работу
     from types import SimpleNamespace
 
-    fake_call = SimpleNamespace(message=message, from_user=message.from_user, data="list_canteens", answer=lambda *args, **kwargs: None)
+    async def _dummy_answer(*args, **kwargs):
+        return None
+
+    fake_call = SimpleNamespace(message=message, from_user=message.from_user, data="list_canteens", answer=_dummy_answer)
     await callback_list_canteens(fake_call, state)  # type: ignore[arg-type]
 
     await state.clear()
