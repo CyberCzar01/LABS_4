@@ -71,7 +71,7 @@ async def cmd_admin(message: types.Message, bot: Bot) -> None:
 
     # Ставим reply-кнопку «Админ» без лишнего текста, чтобы не засорять чат
     admin_rkb = types.ReplyKeyboardMarkup(keyboard=[[types.KeyboardButton(text="Админ")]], resize_keyboard=True)
-    await message.answer(" ", reply_markup=admin_rkb)
+    await message.answer("\u200B", reply_markup=admin_rkb)
 
 
 @admin_router.callback_query(lambda c: c.data == "list_users")
@@ -370,7 +370,7 @@ async def meal_add_complex(message: types.Message, state: FSMContext):
     admin_rkb = types.ReplyKeyboardMarkup(
         keyboard=[[types.KeyboardButton(text="Админ")]], resize_keyboard=True
     )
-    await message.answer(" ", reply_markup=admin_rkb)
+    await message.answer("\u200B", reply_markup=admin_rkb)
 
     await state.clear()
 
@@ -791,7 +791,7 @@ async def callback_admin_menu(call: types.CallbackQuery):
     await call.message.answer("Панель администратора", reply_markup=_build_admin_kb())
 
     admin_rkb = types.ReplyKeyboardMarkup(keyboard=[[types.KeyboardButton(text="Админ")]], resize_keyboard=True)
-    await call.message.answer(" ", reply_markup=admin_rkb)
+    await call.message.answer("\u200B", reply_markup=admin_rkb)
 
     await call.answer()
 
