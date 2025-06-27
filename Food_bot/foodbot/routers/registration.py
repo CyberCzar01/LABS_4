@@ -182,4 +182,42 @@ async def callback_reject(call: types.CallbackQuery, bot: Bot) -> None:  # noqa:
         pass
 
     await call.message.edit_reply_markup(reply_markup=None)
-    await call.answer("Отклонено") 
+    await call.answer("Отклонено")
+
+
+# Alias: текстовая кнопка «Регистрация»
+
+
+@registration_router.message(F.text.lower() == "регистрация")
+async def txt_register_alias(message: types.Message, state: FSMContext):
+    # перенаправляем к команде /register
+    await cmd_register(message, state)
+
+
+# ===== Помощник: отложенная отправка заявок админам =====
+
+
+async def notify_pending_requests(bot: Bot, admin_id: int) -> None:
+    """Отправляет админу все неподтверждённые заявки пользователей."""
+    from sqlmodel import select
+
+    async with get_session() as session:
+        # Пользователи без approve и не админы
+        res = await session.exec(select(User).where(User.is_approved == False, User.is_admin == False))  # noqa: E712
+        pending = list(res)
+
+    for user in pending:
+        try:
+            await bot.send_message(
+                admin_id,
+                f"Пользователь {user.full_name or '—'} (id={user.tg_id}) запрашивает доступ.",
+                reply_markup=types.InlineKeyboardMarkup(
+                    inline_keyboard=[[
+                        types.InlineKeyboardButton(text="✅ Подтвердить", callback_data=f"approve:{user.tg_id}"),
+                        types.InlineKeyboardButton(text="❌ Отклонить", callback_data=f"reject:{user.tg_id}"),
+                    ]]
+                ),
+            )
+        except Exception:
+            # если снова не удалось (бот всё ещё не начал диалог) — пропустим
+            continue 

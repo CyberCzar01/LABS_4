@@ -9,6 +9,7 @@ from aiogram.client.default import DefaultBotProperties
 from foodbot.config import settings
 from foodbot.database import init_db
 from foodbot.routers import registration_router, admin_router, menu_router, menu_btn_router, feedback_router
+from foodbot.routers.registration import notify_pending_requests
 
 
 router = Router()
@@ -20,11 +21,18 @@ async def cmd_start(message: types.Message) -> None:
     # Reply-кнопка «Админ» только для администраторов
     from foodbot.routers.admin import _is_admin  # локальный импорт, чтобы избежать циклов
     if await _is_admin(message.from_user.id, message.from_user.username):
+        # отправляем отложенные заявки (если были)
+        await notify_pending_requests(message.bot, message.from_user.id)
+
         rkb = types.ReplyKeyboardMarkup(
             keyboard=[[types.KeyboardButton(text="Админ")]], resize_keyboard=True
         )
     else:
-        rkb = None
+        rkb = types.ReplyKeyboardMarkup(
+            keyboard=[[types.KeyboardButton(text="Регистрация")]],
+            resize_keyboard=True,
+            one_time_keyboard=True,
+        )
 
     await message.answer(
         "👋 Привет! Я бот для заказа обедов. Все заказы оформляются только через меню, которое создаёт администратор.\n"
