@@ -1,0 +1,7 @@
+kansu fib(x) {
+    sorenara (x < 2) {
+        modoru x;
+    }
+    modoru fib(x - 1) + fib(x - 2);
+}
+fib(15);

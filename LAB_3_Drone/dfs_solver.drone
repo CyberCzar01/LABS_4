@@ -1,0 +1,145 @@
+seisu CAP = 12000;           // максимальное число клеток в лабиринте
+
+// Координаты посещённых клеток
+hairetsu VX = {CAP};
+hairetsu VY = {CAP};
+hairetsu VZ = {CAP};
+seisu v_cnt = 0;             // счётчик посещений
+
+kansu mark(x, y, z) {
+    VX[v_cnt] = x;
+    VY[v_cnt] = y;
+    VZ[v_cnt] = z;
+    v_cnt = v_cnt + 1;
+    modoru 0;
+}
+
+kansu visited(x, y, z) {
+    shuki i = 0:v_cnt {
+        sorenara (VX[i] == x) {
+            sorenara (VY[i] == y) {
+                sorenara (VZ[i] == z) { modoru shinri; }
+            }
+        }
+    }
+    modoru uso;
+}
+
+// Стек обхода
+hairetsu SX  = {CAP};
+hairetsu SY  = {CAP};
+hairetsu SZ  = {CAP};
+hairetsu SN  = {CAP};   // индекс следующего направления для текущей вершины
+seisu top = 0;
+
+kansu push(x, y, z) {
+    SX[top] = x;
+    SY[top] = y;
+    SZ[top] = z;
+    SN[top] = 0;
+    top = top + 1;
+    modoru 0;
+}
+
+// Список смещений в шести направлениях
+hairetsu DIR = [
+    rippotai { 1,  0,  0, uso },
+    rippotai {-1,  0,  0, uso },
+    rippotai { 0,  1,  0, uso },
+    rippotai { 0, -1,  0, uso },
+    rippotai { 0,  0,  1, uso },
+    rippotai { 0,  0, -1, uso }
+];
+
+// Примитивы робота
+kansu step(dx, dy, dz) {
+    sorenara (dx == 1)  { >_>; }
+    sorenara (dx == -1) { <_<; }
+    sorenara (dy == 1)  { ^_^; }
+    sorenara (dy == -1) { v_v; }
+    sorenara (dz == 1)  { o_o; }
+    sorenara (dz == -1) { ~_~; }
+    modoru 0;
+}
+
+kansu sense(dx, dy, dz) {
+    sorenara (dx == 1)  { modoru >_0; }
+    sorenara (dx == -1) { modoru <_0; }
+    sorenara (dy == 1)  { modoru ^_0; }
+    sorenara (dy == -1) { modoru v_0; }
+    sorenara (dz == 1)  { modoru o_0; }
+    sorenara (dz == -1) { modoru ~_0; }
+    modoru -1;
+}
+
+kansu at_exit() {
+    rippotai c = *_*;
+    modoru c=>is_exit;
+}
+
+rippotai start = *_*;
+seisu sx = start=>x;
+seisu sy = start=>y;
+seisu sz = start=>z;
+
+push(sx, sy, sz);
+mark(sx, sy, sz);
+
+ronri found = uso;
+
+shuki steps = 0:20000 {
+    sorenara (top == 0) { kido; }           // стек опустел – выхода нет
+
+    // текущая вершина – верх стека
+    seisu idx = top - 1;
+    seisu cx = SX[idx];
+    seisu cy = SY[idx];
+    seisu cz = SZ[idx];
+    seisu dirIdx = SN[idx];
+
+    // Проверка выхода
+    sorenara (at_exit()) {
+        found = shinri;
+        kido;
+    }
+
+    // Если все 6 направлений уже проверили – откат
+    sorenara (dirIdx == 6) {
+        // снимаем текущую вершину
+        top = top - 1;
+        sorenara (top == 0) { shushi; }     // вернулись в начало
+        // координаты новой вершины после pop
+        seisu px = SX[top-1];
+        seisu py = SY[top-1];
+        seisu pz = SZ[top-1];
+        // шаг назад на одну клетку
+        step(px - cx, py - cy, pz - cz);
+        shushi; // переход к следующей итерации
+    }
+
+    // смещение для текущего направления
+    seisu dx = DIR[dirIdx]=>x;
+    seisu dy = DIR[dirIdx]=>y;
+    seisu dz = DIR[dirIdx]=>z;
+
+    // увеличиваем счётчик направлений для этой вершины
+    SN[idx] = dirIdx + 1;
+
+    seisu nx = cx + dx;
+    seisu ny = cy + dy;
+    seisu nz = cz + dz;
+
+    // если уже были там – пропускаем
+    sorenara (visited(nx, ny, nz)) { shushi; }
+
+    // если вплотную стена – пропускаем
+    seisu dist = sense(dx, dy, dz);
+    sorenara (dist == 1) { shushi; }
+
+    // делаем шаг и заносим клетку в стек/посещённые
+    step(dx, dy, dz);
+    push(nx, ny, nz);
+    mark(nx, ny, nz);
+}
+
+modoru found; 

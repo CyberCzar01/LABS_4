@@ -1,0 +1,6 @@
+seisu a = (10 + 2) * 5 / 2 - 1;
+seisu b = 10 % 3;
+
+seisu c = a + b;
+
+c;

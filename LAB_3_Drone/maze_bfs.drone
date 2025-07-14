@@ -1,0 +1,189 @@
+
+seisu SHIFT = 150;
+
+hairetsu Qx = {4000};
+hairetsu Qy = {4000};
+hairetsu Qz = {4000};
+seisu q_head = 0;
+seisu q_tail = 0;
+
+kansu enqueue(x, y, z) {
+    Qx[q_tail] = x;
+    Qy[q_tail] = y;
+    Qz[q_tail] = z;
+    q_tail = q_tail + 1;
+    modoru 0;
+}
+
+kansu dequeue() {
+    rippotai p = {Qx[q_head], Qy[q_head], Qz[q_head], uso};
+    q_head = q_head + 1;
+    modoru p;
+}
+
+hairetsu visited = {301, 301, 301};
+
+kansu mark(x, y, z) {
+    visited[x + SHIFT, y + SHIFT, z + SHIFT] = shinri;
+}
+
+kansu is_vis(x, y, z) {
+    modoru visited[x + SHIFT, y + SHIFT, z + SHIFT];
+}
+
+kansu step(dx, dy, dz) {
+    sorenara (dx == 1)  { >_>; }
+    sorenara (dx == -1) { <_<; }
+    sorenara (dy == 1)  { ^_^; }
+    sorenara (dy == -1) { v_v; }
+    sorenara (dz == 1)  { o_o; }
+    sorenara (dz == -1) { ~_~; }
+    modoru 0;
+}
+
+kansu sense(dx, dy, dz) {
+    sorenara (dx == 1)  { modoru >_0; }
+    sorenara (dx == -1) { modoru <_0; }
+    sorenara (dy == 1)  { modoru ^_0; }
+    sorenara (dy == -1) { modoru v_0; }
+    sorenara (dz == 1)  { modoru o_0; }
+    sorenara (dz == -1) { modoru ~_0; }
+    modoru -1;
+}
+
+kansu at_exit() {
+    rippotai c = *_*;
+    modoru c=>is_exit;
+}
+
+rippotai start = *_*;
+seisu sx = start=>x;
+seisu sy = start=>y;
+seisu sz = start=>z;
+
+enqueue(sx, sy, sz);
+mark(sx, sy, sz);
+
+ronri found = uso;
+
+hairetsu DIR = [
+    rippotai { 1,  0,  0, uso},
+    rippotai {-1,  0,  0, uso},
+    rippotai { 0,  1,  0, uso},
+    rippotai { 0, -1,  0, uso},
+    rippotai { 0,  0,  1, uso},
+    rippotai { 0,  0, -1, uso}
+];
+
+kansu move_to(tx, ty, tz) {
+    shuki guard = 0:1000 {      // предохранитель от зацикливания
+        rippotai p = *_*;
+        seisu rx = p=>x;
+        seisu ry = p=>y;
+        seisu rz = p=>z;
+
+        // достигли цели
+        sorenara (rx == tx) {
+            sorenara (ry == ty) {
+                sorenara (rz == tz) { kido; }
+            }
+        }
+
+        // вычисляем желательные приоритетные смещения
+        seisu dx = 0;
+        seisu dy = 0;
+        seisu dz = 0;
+        sorenara (rx < tx) { dx = 1; }
+        sorenara (rx > tx) { dx = -1; }
+        sorenara (dx == 0) {
+            sorenara (ry < ty) { dy = 1; }
+            sorenara (ry > ty) { dy = -1; }
+        }
+        sorenara (dx == 0) {
+            sorenara (dy == 0) {
+                sorenara (rz < tz) { dz = 1; }
+                sorenara (rz > tz) { dz = -1; }
+            }
+        }
+
+        // пытаемся сделать шаг по выбранной оси, если нет стены
+        sorenara (dx != 0) {
+            seisu dist = sense(dx, 0, 0);
+            sorenara (dist != 1) {
+                step(dx, 0, 0);
+                shushi;
+            }
+        }
+        sorenara (dy != 0) {
+            seisu dist = sense(0, dy, 0);
+            sorenara (dist != 1) {
+                step(0, dy, 0);
+                shushi;
+            }
+        }
+        sorenara (dz != 0) {
+            seisu dist = sense(0, 0, dz);
+            sorenara (dist != 1) {
+                step(0, 0, dz);
+                shushi;
+            }
+        }
+
+        // пробуем альтернативы
+        shuki alt = 0:6 {
+            seisu adx = DIR[alt]=>x;
+            seisu ady = DIR[alt]=>y;
+            seisu adz = DIR[alt]=>z;
+            seisu dist = sense(adx, ady, adz);
+            sorenara (dist != 1) {
+                step(adx, ady, adz);
+                shushi;
+            }
+        }
+
+        // если дошли сюда — окружены стенами, выходим с ошибкой
+        modoru 0;
+    }
+    modoru 0;
+}
+
+shuki iter = 0:20000 {
+    // очередь пуста – выхода нет
+    sorenara (q_head == q_tail) { kido; }
+
+    rippotai cur = dequeue();
+    seisu cx = cur=>x;
+    seisu cy = cur=>y;
+    seisu cz = cur=>z;
+
+    // Безопасно перемещаемся в cur, обходя стены
+    move_to(cx, cy, cz);
+
+    // Проверка выхода
+    sorenara (at_exit()) {
+        found = shinri;
+        kido;
+    }
+
+    // Осматриваем 6 соседей
+    shuki d = 0:6 {
+        seisu ddx = DIR[d]=>x;
+        seisu ddy = DIR[d]=>y;
+        seisu ddz = DIR[d]=>z;
+
+        seisu nx = cx + ddx;
+        seisu ny = cy + ddy;
+        seisu nz = cz + ddz;
+
+        sorenara (is_vis(nx, ny, nz)) { shushi; }
+        seisu dist = sense(ddx, ddy, ddz);
+        sorenara (dist == 1) { shushi; } // стена вплотную
+
+        // клетка свободна; отмечаем и ставим в очередь (не заходя внутрь)
+        mark(nx, ny, nz);
+        enqueue(nx, ny, nz);
+    }
+    sorenara (found) { kido; }
+}
+
+modoru found; 

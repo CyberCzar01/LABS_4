@@ -1,0 +1,4543 @@
+
+state 0
+	$accept: .program $end 
+	statement_list: .    (2)
+
+	.  reduce 2 (src line 89)
+
+	program  goto 1
+	statement_list  goto 2
+
+state 1
+	$accept:  program.$end 
+
+	$end  accept
+	.  error
+
+
+state 2
+	program:  statement_list.    (1)
+	statement_list:  statement_list.statement 
+
+	TOKEN_SEISU  shift 18
+	TOKEN_RONRI  shift 19
+	TOKEN_RIPPOTAI  shift 11
+	TOKEN_HAIRETSU  shift 12
+	TOKEN_KANSU  shift 16
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_KIDO  shift 14
+	TOKEN_SHUSHI  shift 15
+	TOKEN_MODORU  shift 13
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  reduce 1 (src line 83)
+
+	statement  goto 3
+	expression  goto 17
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	variable_declaration  goto 4
+	return_statement  goto 5
+	break_statement  goto 6
+	continue_statement  goto 7
+	function_declaration  goto 8
+	expression_statement  goto 9
+	identifier  goto 29
+	variable_type  goto 10
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 3
+	statement_list:  statement_list statement.    (3)
+
+	.  reduce 3 (src line 93)
+
+
+state 4
+	statement:  variable_declaration.    (4)
+
+	.  reduce 4 (src line 98)
+
+
+state 5
+	statement:  return_statement.    (5)
+
+	.  reduce 5 (src line 100)
+
+
+state 6
+	statement:  break_statement.    (6)
+
+	.  reduce 6 (src line 101)
+
+
+state 7
+	statement:  continue_statement.    (7)
+
+	.  reduce 7 (src line 102)
+
+
+state 8
+	statement:  function_declaration.    (8)
+
+	.  reduce 8 (src line 103)
+
+
+state 9
+	statement:  expression_statement.    (9)
+
+	.  reduce 9 (src line 104)
+
+
+state 10
+	variable_declaration:  variable_type.TOKEN_IDENTIFIER TOKEN_ASSIGN expression optional_semicolon 
+
+	TOKEN_IDENTIFIER  shift 62
+	.  error
+
+
+state 11
+	variable_declaration:  TOKEN_RIPPOTAI.TOKEN_IDENTIFIER TOKEN_ASSIGN expression optional_semicolon 
+	variable_declaration:  TOKEN_RIPPOTAI.TOKEN_IDENTIFIER TOKEN_ASSIGN cell_literal_body optional_semicolon 
+	cell_literal:  TOKEN_RIPPOTAI.cell_literal_body 
+
+	TOKEN_IDENTIFIER  shift 63
+	TOKEN_LBRACE  shift 65
+	.  error
+
+	cell_literal_body  goto 64
+
+12: shift/reduce conflict (shift 66(0), red'n 19(0)) on TOKEN_IDENTIFIER
+state 12
+	variable_declaration:  TOKEN_HAIRETSU.TOKEN_IDENTIFIER TOKEN_ASSIGN expression optional_semicolon 
+	variable_type:  TOKEN_HAIRETSU.    (19)
+
+	TOKEN_IDENTIFIER  shift 66
+	.  error
+
+
+state 13
+	return_statement:  TOKEN_MODORU.expression optional_semicolon 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 67
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 14
+	break_statement:  TOKEN_KIDO.optional_semicolon 
+	optional_semicolon: .    (11)
+
+	TOKEN_SEMICOLON  shift 71
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 70
+
+state 15
+	continue_statement:  TOKEN_SHUSHI.optional_semicolon 
+	optional_semicolon: .    (11)
+
+	TOKEN_SEMICOLON  shift 71
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 72
+
+state 16
+	function_declaration:  TOKEN_KANSU.TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN block_statement 
+	function_literal:  TOKEN_KANSU.TOKEN_LPAREN parameter_list TOKEN_RPAREN block_statement 
+
+	TOKEN_IDENTIFIER  shift 73
+	TOKEN_LPAREN  shift 74
+	.  error
+
+
+17: shift/reduce conflict (shift 77(5), red'n 11(0)) on TOKEN_MINUS
+17: shift/reduce conflict (shift 87(8), red'n 11(0)) on TOKEN_LPAREN
+17: shift/reduce conflict (shift 88(8), red'n 11(0)) on TOKEN_LBRACKET
+state 17
+	expression_statement:  expression.optional_semicolon 
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	optional_semicolon: .    (11)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_SEMICOLON  shift 71
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 75
+
+state 18
+	variable_type:  TOKEN_SEISU.    (17)
+
+	.  reduce 17 (src line 137)
+
+
+state 19
+	variable_type:  TOKEN_RONRI.    (18)
+
+	.  reduce 18 (src line 139)
+
+
+state 20
+	expression:  simple_expression.    (26)
+
+	.  reduce 26 (src line 178)
+
+
+state 21
+	expression:  assignment_expression.    (27)
+
+	.  reduce 27 (src line 180)
+
+
+state 22
+	expression:  TOKEN_MINUS.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 90
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 23
+	expression:  TOKEN_NOT.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 91
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 24
+	expression:  if_expression.    (41)
+
+	.  reduce 41 (src line 194)
+
+
+state 25
+	expression:  loop_expression.    (42)
+
+	.  reduce 42 (src line 195)
+
+
+state 26
+	expression:  TOKEN_LPAREN.expression TOKEN_RPAREN 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 92
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 27
+	expression:  sequence_expression.    (48)
+
+	.  reduce 48 (src line 215)
+
+
+state 28
+	simple_expression:  literal.    (50)
+
+	.  reduce 50 (src line 225)
+
+
+state 29
+	assignment_expression:  identifier.TOKEN_ASSIGN expression 
+	simple_expression:  identifier.    (51)
+
+	TOKEN_ASSIGN  shift 93
+	.  reduce 51 (src line 227)
+
+
+state 30
+	simple_expression:  array_literal.    (52)
+
+	.  reduce 52 (src line 228)
+
+
+state 31
+	simple_expression:  cell_literal.    (53)
+
+	.  reduce 53 (src line 229)
+
+
+state 32
+	simple_expression:  function_literal.    (54)
+
+	.  reduce 54 (src line 230)
+
+
+state 33
+	simple_expression:  ruikei_expression.    (55)
+
+	.  reduce 55 (src line 231)
+
+
+state 34
+	simple_expression:  jigen_expression.    (56)
+
+	.  reduce 56 (src line 232)
+
+
+state 35
+	simple_expression:  robot_operation.    (57)
+
+	.  reduce 57 (src line 233)
+
+
+state 36
+	simple_expression:  array_dims_literal.    (58)
+
+	.  reduce 58 (src line 234)
+
+
+state 37
+	if_expression:  TOKEN_SORENARA.TOKEN_LPAREN expression TOKEN_RPAREN block_statement if_tail 
+
+	TOKEN_LPAREN  shift 94
+	.  error
+
+
+state 38
+	loop_expression:  TOKEN_SHUKI.TOKEN_IDENTIFIER TOKEN_ASSIGN expression TOKEN_COLON expression block_statement 
+
+	TOKEN_IDENTIFIER  shift 95
+	.  error
+
+
+state 39
+	sequence_expression:  TOKEN_LBRACE.optional_operation_list TOKEN_RBRACE 
+	array_dims_literal:  TOKEN_LBRACE.non_empty_expression_list TOKEN_RBRACE 
+	optional_operation_list: .    (99)
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  reduce 99 (src line 365)
+
+	expression  goto 99
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	non_empty_expression_list  goto 97
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+	operation_item  goto 100
+	operation_list  goto 98
+	optional_operation_list  goto 96
+
+state 40
+	literal:  TOKEN_INTEGER.    (59)
+
+	.  reduce 59 (src line 237)
+
+
+state 41
+	literal:  TOKEN_HEX.    (60)
+
+	.  reduce 60 (src line 245)
+
+
+state 42
+	literal:  TOKEN_SHINRI.    (61)
+
+	.  reduce 61 (src line 252)
+
+
+state 43
+	literal:  TOKEN_USO.    (62)
+
+	.  reduce 62 (src line 253)
+
+
+state 44
+	identifier:  TOKEN_IDENTIFIER.    (63)
+
+	.  reduce 63 (src line 256)
+
+
+state 45
+	array_literal:  TOKEN_LBRACKET.expression_list TOKEN_RBRACKET 
+	expression_list: .    (72)
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  reduce 72 (src line 295)
+
+	expression  goto 103
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	expression_list  goto 101
+	non_empty_expression_list  goto 102
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 46
+	ruikei_expression:  TOKEN_RUIKEI.TOKEN_LBRACE expression TOKEN_RBRACE 
+	ruikei_expression:  TOKEN_RUIKEI.TOKEN_LBRACE expression expression TOKEN_RBRACE 
+
+	TOKEN_LBRACE  shift 104
+	.  error
+
+
+state 47
+	jigen_expression:  TOKEN_JIGEN.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 105
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 48
+	robot_operation:  TOKEN_MOVE_UP.    (84)
+
+	.  reduce 84 (src line 342)
+
+
+state 49
+	robot_operation:  TOKEN_MOVE_DOWN.    (85)
+
+	.  reduce 85 (src line 344)
+
+
+state 50
+	robot_operation:  TOKEN_MOVE_LEFT.    (86)
+
+	.  reduce 86 (src line 345)
+
+
+state 51
+	robot_operation:  TOKEN_MOVE_RIGHT.    (87)
+
+	.  reduce 87 (src line 346)
+
+
+state 52
+	robot_operation:  TOKEN_MOVE_FORWARD.    (88)
+
+	.  reduce 88 (src line 347)
+
+
+state 53
+	robot_operation:  TOKEN_MOVE_BACKWARD.    (89)
+
+	.  reduce 89 (src line 348)
+
+
+state 54
+	robot_operation:  TOKEN_MEASURE_UP.    (90)
+
+	.  reduce 90 (src line 349)
+
+
+state 55
+	robot_operation:  TOKEN_MEASURE_DOWN.    (91)
+
+	.  reduce 91 (src line 350)
+
+
+state 56
+	robot_operation:  TOKEN_MEASURE_LEFT.    (92)
+
+	.  reduce 92 (src line 351)
+
+
+state 57
+	robot_operation:  TOKEN_MEASURE_RIGHT.    (93)
+
+	.  reduce 93 (src line 352)
+
+
+state 58
+	robot_operation:  TOKEN_MEASURE_FORWARD.    (94)
+
+	.  reduce 94 (src line 353)
+
+
+state 59
+	robot_operation:  TOKEN_MEASURE_BACKWARD.    (95)
+
+	.  reduce 95 (src line 354)
+
+
+state 60
+	robot_operation:  TOKEN_GET_POSITION.    (96)
+
+	.  reduce 96 (src line 355)
+
+
+state 61
+	robot_operation:  TOKEN_BREAK_SEQUENCE.    (97)
+
+	.  reduce 97 (src line 356)
+
+
+state 62
+	variable_declaration:  variable_type TOKEN_IDENTIFIER.TOKEN_ASSIGN expression optional_semicolon 
+
+	TOKEN_ASSIGN  shift 106
+	.  error
+
+
+state 63
+	variable_declaration:  TOKEN_RIPPOTAI TOKEN_IDENTIFIER.TOKEN_ASSIGN expression optional_semicolon 
+	variable_declaration:  TOKEN_RIPPOTAI TOKEN_IDENTIFIER.TOKEN_ASSIGN cell_literal_body optional_semicolon 
+
+	TOKEN_ASSIGN  shift 107
+	.  error
+
+
+state 64
+	cell_literal:  TOKEN_RIPPOTAI cell_literal_body.    (65)
+
+	.  reduce 65 (src line 266)
+
+
+state 65
+	cell_literal_body:  TOKEN_LBRACE.expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_RBRACE 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 108
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 66
+	variable_declaration:  TOKEN_HAIRETSU TOKEN_IDENTIFIER.TOKEN_ASSIGN expression optional_semicolon 
+
+	TOKEN_ASSIGN  shift 109
+	.  error
+
+
+67: shift/reduce conflict (shift 77(5), red'n 11(0)) on TOKEN_MINUS
+67: shift/reduce conflict (shift 87(8), red'n 11(0)) on TOKEN_LPAREN
+67: shift/reduce conflict (shift 88(8), red'n 11(0)) on TOKEN_LBRACKET
+state 67
+	return_statement:  TOKEN_MODORU expression.optional_semicolon 
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	optional_semicolon: .    (11)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_SEMICOLON  shift 71
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 110
+
+state 68
+	cell_literal:  TOKEN_RIPPOTAI.cell_literal_body 
+
+	TOKEN_LBRACE  shift 65
+	.  error
+
+	cell_literal_body  goto 64
+
+state 69
+	function_literal:  TOKEN_KANSU.TOKEN_LPAREN parameter_list TOKEN_RPAREN block_statement 
+
+	TOKEN_LPAREN  shift 74
+	.  error
+
+
+state 70
+	break_statement:  TOKEN_KIDO optional_semicolon.    (21)
+
+	.  reduce 21 (src line 149)
+
+
+state 71
+	optional_semicolon:  TOKEN_SEMICOLON.    (12)
+
+	.  reduce 12 (src line 115)
+
+
+state 72
+	continue_statement:  TOKEN_SHUSHI optional_semicolon.    (22)
+
+	.  reduce 22 (src line 155)
+
+
+state 73
+	function_declaration:  TOKEN_KANSU TOKEN_IDENTIFIER.TOKEN_LPAREN parameter_list TOKEN_RPAREN block_statement 
+
+	TOKEN_LPAREN  shift 111
+	.  error
+
+
+state 74
+	function_literal:  TOKEN_KANSU TOKEN_LPAREN.parameter_list TOKEN_RPAREN block_statement 
+	parameter_list: .    (68)
+
+	TOKEN_IDENTIFIER  shift 44
+	.  reduce 68 (src line 285)
+
+	identifier  goto 114
+	parameter_list  goto 112
+	non_empty_parameter_list  goto 113
+
+state 75
+	expression_statement:  expression optional_semicolon.    (10)
+
+	.  reduce 10 (src line 107)
+
+
+state 76
+	expression:  expression TOKEN_PLUS.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 115
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 77
+	expression:  expression TOKEN_MINUS.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 116
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 78
+	expression:  expression TOKEN_ASTERISK.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 117
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 79
+	expression:  expression TOKEN_SLASH.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 118
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 80
+	expression:  expression TOKEN_PERCENT.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 119
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 81
+	expression:  expression TOKEN_EQUALS.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 120
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 82
+	expression:  expression TOKEN_NOTEQUALS.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 121
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 83
+	expression:  expression TOKEN_LESS.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 122
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 84
+	expression:  expression TOKEN_GREATER.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 123
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 85
+	expression:  expression TOKEN_AND.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 124
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 86
+	expression:  expression TOKEN_OR.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 125
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 87
+	expression:  expression TOKEN_LPAREN.expression_list TOKEN_RPAREN 
+	expression_list: .    (72)
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  reduce 72 (src line 295)
+
+	expression  goto 103
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	expression_list  goto 126
+	non_empty_expression_list  goto 102
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 88
+	expression:  expression TOKEN_LBRACKET.non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression TOKEN_LBRACKET.non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 103
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	non_empty_expression_list  goto 127
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 89
+	expression:  expression TOKEN_ARROW.identifier 
+
+	TOKEN_IDENTIFIER  shift 44
+	.  error
+
+	identifier  goto 128
+
+state 90
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  TOKEN_MINUS expression.    (39)
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_ARROW  shift 89
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 39 (src line 192)
+
+
+state 91
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  TOKEN_NOT expression.    (40)
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_ARROW  shift 89
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 40 (src line 193)
+
+
+state 92
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  TOKEN_LPAREN expression.TOKEN_RPAREN 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_RPAREN  shift 129
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 93
+	assignment_expression:  identifier TOKEN_ASSIGN.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 130
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 94
+	if_expression:  TOKEN_SORENARA TOKEN_LPAREN.expression TOKEN_RPAREN block_statement if_tail 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 131
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 95
+	loop_expression:  TOKEN_SHUKI TOKEN_IDENTIFIER.TOKEN_ASSIGN expression TOKEN_COLON expression block_statement 
+
+	TOKEN_ASSIGN  shift 132
+	.  error
+
+
+state 96
+	sequence_expression:  TOKEN_LBRACE optional_operation_list.TOKEN_RBRACE 
+
+	TOKEN_RBRACE  shift 133
+	.  error
+
+
+state 97
+	non_empty_expression_list:  non_empty_expression_list.TOKEN_COMMA expression 
+	array_dims_literal:  TOKEN_LBRACE non_empty_expression_list.TOKEN_RBRACE 
+
+	TOKEN_COMMA  shift 134
+	TOKEN_RBRACE  shift 135
+	.  error
+
+
+state 98
+	optional_operation_list:  operation_list.    (100)
+	operation_list:  operation_list.TOKEN_SEMICOLON operation_item 
+	operation_list:  operation_list.TOKEN_SEMICOLON 
+
+	TOKEN_SEMICOLON  shift 136
+	.  reduce 100 (src line 367)
+
+
+ 99: reduce/reduce conflict  (red'ns 74 and 104) on TOKEN_RBRACE
+state 99
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	non_empty_expression_list:  expression.    (74)
+	operation_item:  expression.    (104)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_SEMICOLON  reduce 104 (src line 376)
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 74 (src line 300)
+
+
+state 100
+	operation_list:  operation_item.    (101)
+
+	.  reduce 101 (src line 370)
+
+
+state 101
+	array_literal:  TOKEN_LBRACKET expression_list.TOKEN_RBRACKET 
+
+	TOKEN_RBRACKET  shift 137
+	.  error
+
+
+state 102
+	expression_list:  non_empty_expression_list.    (73)
+	non_empty_expression_list:  non_empty_expression_list.TOKEN_COMMA expression 
+
+	TOKEN_COMMA  shift 134
+	.  reduce 73 (src line 297)
+
+
+state 103
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	non_empty_expression_list:  expression.    (74)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 74 (src line 300)
+
+
+state 104
+	ruikei_expression:  TOKEN_RUIKEI TOKEN_LBRACE.expression TOKEN_RBRACE 
+	ruikei_expression:  TOKEN_RUIKEI TOKEN_LBRACE.expression expression TOKEN_RBRACE 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 138
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+105: shift/reduce conflict (shift 76(5), red'n 83(0)) on TOKEN_PLUS
+105: shift/reduce conflict (shift 77(5), red'n 83(0)) on TOKEN_MINUS
+105: shift/reduce conflict (shift 78(6), red'n 83(0)) on TOKEN_ASTERISK
+105: shift/reduce conflict (shift 79(6), red'n 83(0)) on TOKEN_SLASH
+105: shift/reduce conflict (shift 83(4), red'n 83(0)) on TOKEN_LESS
+105: shift/reduce conflict (shift 84(4), red'n 83(0)) on TOKEN_GREATER
+105: shift/reduce conflict (shift 81(3), red'n 83(0)) on TOKEN_EQUALS
+105: shift/reduce conflict (shift 82(3), red'n 83(0)) on TOKEN_NOTEQUALS
+105: shift/reduce conflict (shift 85(2), red'n 83(0)) on TOKEN_AND
+105: shift/reduce conflict (shift 86(2), red'n 83(0)) on TOKEN_OR
+105: shift/reduce conflict (shift 89(8), red'n 83(0)) on TOKEN_ARROW
+105: shift/reduce conflict (shift 80(6), red'n 83(0)) on TOKEN_PERCENT
+105: shift/reduce conflict (shift 87(8), red'n 83(0)) on TOKEN_LPAREN
+105: shift/reduce conflict (shift 88(8), red'n 83(0)) on TOKEN_LBRACKET
+state 105
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	jigen_expression:  TOKEN_JIGEN expression.    (83)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 83 (src line 336)
+
+
+state 106
+	variable_declaration:  variable_type TOKEN_IDENTIFIER TOKEN_ASSIGN.expression optional_semicolon 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 139
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 107
+	variable_declaration:  TOKEN_RIPPOTAI TOKEN_IDENTIFIER TOKEN_ASSIGN.expression optional_semicolon 
+	variable_declaration:  TOKEN_RIPPOTAI TOKEN_IDENTIFIER TOKEN_ASSIGN.cell_literal_body optional_semicolon 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 142
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 140
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	cell_literal_body  goto 141
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 108
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	cell_literal_body:  TOKEN_LBRACE expression.TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_RBRACE 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_COMMA  shift 143
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 109
+	variable_declaration:  TOKEN_HAIRETSU TOKEN_IDENTIFIER TOKEN_ASSIGN.expression optional_semicolon 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 144
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 110
+	return_statement:  TOKEN_MODORU expression optional_semicolon.    (20)
+
+	.  reduce 20 (src line 143)
+
+
+state 111
+	function_declaration:  TOKEN_KANSU TOKEN_IDENTIFIER TOKEN_LPAREN.parameter_list TOKEN_RPAREN block_statement 
+	parameter_list: .    (68)
+
+	TOKEN_IDENTIFIER  shift 44
+	.  reduce 68 (src line 285)
+
+	identifier  goto 114
+	parameter_list  goto 145
+	non_empty_parameter_list  goto 113
+
+state 112
+	function_literal:  TOKEN_KANSU TOKEN_LPAREN parameter_list.TOKEN_RPAREN block_statement 
+
+	TOKEN_RPAREN  shift 146
+	.  error
+
+
+state 113
+	parameter_list:  non_empty_parameter_list.    (69)
+	non_empty_parameter_list:  non_empty_parameter_list.TOKEN_COMMA identifier 
+
+	TOKEN_COMMA  shift 147
+	.  reduce 69 (src line 287)
+
+
+state 114
+	non_empty_parameter_list:  identifier.    (70)
+
+	.  reduce 70 (src line 290)
+
+
+state 115
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression TOKEN_PLUS expression.    (28)
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 28 (src line 181)
+
+
+state 116
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression TOKEN_MINUS expression.    (29)
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 29 (src line 182)
+
+
+state 117
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression TOKEN_ASTERISK expression.    (30)
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_ARROW  shift 89
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 30 (src line 183)
+
+
+state 118
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression TOKEN_SLASH expression.    (31)
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_ARROW  shift 89
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 31 (src line 184)
+
+
+state 119
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression TOKEN_PERCENT expression.    (32)
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_ARROW  shift 89
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 32 (src line 185)
+
+
+state 120
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression TOKEN_EQUALS expression.    (33)
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 33 (src line 186)
+
+
+state 121
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression TOKEN_NOTEQUALS expression.    (34)
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 34 (src line 187)
+
+
+state 122
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression TOKEN_LESS expression.    (35)
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 35 (src line 188)
+
+
+state 123
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression TOKEN_GREATER expression.    (36)
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 36 (src line 189)
+
+
+state 124
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression TOKEN_AND expression.    (37)
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 37 (src line 190)
+
+
+state 125
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression TOKEN_OR expression.    (38)
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 38 (src line 191)
+
+
+state 126
+	expression:  expression TOKEN_LPAREN expression_list.TOKEN_RPAREN 
+
+	TOKEN_RPAREN  shift 148
+	.  error
+
+
+state 127
+	expression:  expression TOKEN_LBRACKET non_empty_expression_list.TOKEN_RBRACKET 
+	expression:  expression TOKEN_LBRACKET non_empty_expression_list.TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	non_empty_expression_list:  non_empty_expression_list.TOKEN_COMMA expression 
+
+	TOKEN_COMMA  shift 134
+	TOKEN_RBRACKET  shift 149
+	.  error
+
+
+state 128
+	expression:  expression TOKEN_ARROW identifier.    (47)
+
+	.  reduce 47 (src line 214)
+
+
+state 129
+	expression:  TOKEN_LPAREN expression TOKEN_RPAREN.    (43)
+
+	.  reduce 43 (src line 196)
+
+
+state 130
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	assignment_expression:  identifier TOKEN_ASSIGN expression.    (49)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 49 (src line 218)
+
+
+state 131
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	if_expression:  TOKEN_SORENARA TOKEN_LPAREN expression.TOKEN_RPAREN block_statement if_tail 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_RPAREN  shift 150
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 132
+	loop_expression:  TOKEN_SHUKI TOKEN_IDENTIFIER TOKEN_ASSIGN.expression TOKEN_COLON expression block_statement 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 151
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 133
+	sequence_expression:  TOKEN_LBRACE optional_operation_list TOKEN_RBRACE.    (98)
+
+	.  reduce 98 (src line 359)
+
+
+state 134
+	non_empty_expression_list:  non_empty_expression_list TOKEN_COMMA.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 152
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 135
+	array_dims_literal:  TOKEN_LBRACE non_empty_expression_list TOKEN_RBRACE.    (105)
+
+	.  reduce 105 (src line 380)
+
+
+state 136
+	operation_list:  operation_list TOKEN_SEMICOLON.operation_item 
+	operation_list:  operation_list TOKEN_SEMICOLON.    (103)
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  reduce 103 (src line 373)
+
+	expression  goto 154
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+	operation_item  goto 153
+
+state 137
+	array_literal:  TOKEN_LBRACKET expression_list TOKEN_RBRACKET.    (64)
+
+	.  reduce 64 (src line 260)
+
+
+state 138
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	ruikei_expression:  TOKEN_RUIKEI TOKEN_LBRACE expression.TOKEN_RBRACE 
+	ruikei_expression:  TOKEN_RUIKEI TOKEN_LBRACE expression.expression TOKEN_RBRACE 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 155
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_NOT  shift 23
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 156
+	TOKEN_LBRACE  shift 39
+	TOKEN_RBRACE  shift 158
+	TOKEN_LBRACKET  shift 157
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 159
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+139: shift/reduce conflict (shift 77(5), red'n 11(0)) on TOKEN_MINUS
+139: shift/reduce conflict (shift 87(8), red'n 11(0)) on TOKEN_LPAREN
+139: shift/reduce conflict (shift 88(8), red'n 11(0)) on TOKEN_LBRACKET
+state 139
+	variable_declaration:  variable_type TOKEN_IDENTIFIER TOKEN_ASSIGN expression.optional_semicolon 
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	optional_semicolon: .    (11)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_SEMICOLON  shift 71
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 160
+
+140: shift/reduce conflict (shift 77(5), red'n 11(0)) on TOKEN_MINUS
+140: shift/reduce conflict (shift 87(8), red'n 11(0)) on TOKEN_LPAREN
+140: shift/reduce conflict (shift 88(8), red'n 11(0)) on TOKEN_LBRACKET
+state 140
+	variable_declaration:  TOKEN_RIPPOTAI TOKEN_IDENTIFIER TOKEN_ASSIGN expression.optional_semicolon 
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	optional_semicolon: .    (11)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_SEMICOLON  shift 71
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 161
+
+state 141
+	variable_declaration:  TOKEN_RIPPOTAI TOKEN_IDENTIFIER TOKEN_ASSIGN cell_literal_body.optional_semicolon 
+	optional_semicolon: .    (11)
+
+	TOKEN_SEMICOLON  shift 71
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 162
+
+state 142
+	cell_literal_body:  TOKEN_LBRACE.expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_RBRACE 
+	sequence_expression:  TOKEN_LBRACE.optional_operation_list TOKEN_RBRACE 
+	array_dims_literal:  TOKEN_LBRACE.non_empty_expression_list TOKEN_RBRACE 
+	optional_operation_list: .    (99)
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  reduce 99 (src line 365)
+
+	expression  goto 163
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	non_empty_expression_list  goto 97
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+	operation_item  goto 100
+	operation_list  goto 98
+	optional_operation_list  goto 96
+
+state 143
+	cell_literal_body:  TOKEN_LBRACE expression TOKEN_COMMA.expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_RBRACE 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 164
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+144: shift/reduce conflict (shift 77(5), red'n 11(0)) on TOKEN_MINUS
+144: shift/reduce conflict (shift 87(8), red'n 11(0)) on TOKEN_LPAREN
+144: shift/reduce conflict (shift 88(8), red'n 11(0)) on TOKEN_LBRACKET
+state 144
+	variable_declaration:  TOKEN_HAIRETSU TOKEN_IDENTIFIER TOKEN_ASSIGN expression.optional_semicolon 
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	optional_semicolon: .    (11)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_SEMICOLON  shift 71
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 165
+
+state 145
+	function_declaration:  TOKEN_KANSU TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list.TOKEN_RPAREN block_statement 
+
+	TOKEN_RPAREN  shift 166
+	.  error
+
+
+state 146
+	function_literal:  TOKEN_KANSU TOKEN_LPAREN parameter_list TOKEN_RPAREN.block_statement 
+
+	TOKEN_KIDO  shift 169
+	TOKEN_LBRACE  shift 168
+	.  error
+
+	block_statement  goto 167
+
+state 147
+	non_empty_parameter_list:  non_empty_parameter_list TOKEN_COMMA.identifier 
+
+	TOKEN_IDENTIFIER  shift 44
+	.  error
+
+	identifier  goto 170
+
+state 148
+	expression:  expression TOKEN_LPAREN expression_list TOKEN_RPAREN.    (44)
+
+	.  reduce 44 (src line 197)
+
+
+state 149
+	expression:  expression TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET.    (45)
+	expression:  expression TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET.TOKEN_ASSIGN expression 
+
+	TOKEN_ASSIGN  shift 171
+	.  reduce 45 (src line 198)
+
+
+state 150
+	if_expression:  TOKEN_SORENARA TOKEN_LPAREN expression TOKEN_RPAREN.block_statement if_tail 
+
+	TOKEN_KIDO  shift 169
+	TOKEN_LBRACE  shift 168
+	.  error
+
+	block_statement  goto 172
+
+state 151
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	loop_expression:  TOKEN_SHUKI TOKEN_IDENTIFIER TOKEN_ASSIGN expression.TOKEN_COLON expression block_statement 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_COLON  shift 173
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 152
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	non_empty_expression_list:  non_empty_expression_list TOKEN_COMMA expression.    (75)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 75 (src line 302)
+
+
+state 153
+	operation_list:  operation_list TOKEN_SEMICOLON operation_item.    (102)
+
+	.  reduce 102 (src line 372)
+
+
+state 154
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	operation_item:  expression.    (104)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 104 (src line 376)
+
+
+state 155
+	expression:  expression TOKEN_MINUS.expression 
+	expression:  TOKEN_MINUS.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 174
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 156
+	expression:  TOKEN_LPAREN.expression TOKEN_RPAREN 
+	expression:  expression TOKEN_LPAREN.expression_list TOKEN_RPAREN 
+	expression_list: .    (72)
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  reduce 72 (src line 295)
+
+	expression  goto 175
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	expression_list  goto 126
+	non_empty_expression_list  goto 102
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 157
+	expression:  expression TOKEN_LBRACKET.non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression TOKEN_LBRACKET.non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	array_literal:  TOKEN_LBRACKET.expression_list TOKEN_RBRACKET 
+	expression_list: .    (72)
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  reduce 72 (src line 295)
+
+	expression  goto 103
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	expression_list  goto 101
+	non_empty_expression_list  goto 176
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 158
+	ruikei_expression:  TOKEN_RUIKEI TOKEN_LBRACE expression TOKEN_RBRACE.    (81)
+
+	.  reduce 81 (src line 327)
+
+
+state 159
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	ruikei_expression:  TOKEN_RUIKEI TOKEN_LBRACE expression expression.TOKEN_RBRACE 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_RBRACE  shift 177
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 160
+	variable_declaration:  variable_type TOKEN_IDENTIFIER TOKEN_ASSIGN expression optional_semicolon.    (13)
+
+	.  reduce 13 (src line 118)
+
+
+state 161
+	variable_declaration:  TOKEN_RIPPOTAI TOKEN_IDENTIFIER TOKEN_ASSIGN expression optional_semicolon.    (14)
+
+	.  reduce 14 (src line 123)
+
+
+state 162
+	variable_declaration:  TOKEN_RIPPOTAI TOKEN_IDENTIFIER TOKEN_ASSIGN cell_literal_body optional_semicolon.    (15)
+
+	.  reduce 15 (src line 127)
+
+
+163: shift/reduce conflict (shift 143(0), red'n 74(0)) on TOKEN_COMMA
+ 163: reduce/reduce conflict  (red'ns 74 and 104) on TOKEN_RBRACE
+state 163
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	cell_literal_body:  TOKEN_LBRACE expression.TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_RBRACE 
+	non_empty_expression_list:  expression.    (74)
+	operation_item:  expression.    (104)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_COMMA  shift 143
+	TOKEN_LPAREN  shift 87
+	TOKEN_RBRACE  reduce 74 (src line 300)
+	TOKEN_LBRACKET  shift 88
+	.  reduce 104 (src line 376)
+
+
+state 164
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	cell_literal_body:  TOKEN_LBRACE expression TOKEN_COMMA expression.TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_RBRACE 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_COMMA  shift 178
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 165
+	variable_declaration:  TOKEN_HAIRETSU TOKEN_IDENTIFIER TOKEN_ASSIGN expression optional_semicolon.    (16)
+
+	.  reduce 16 (src line 131)
+
+
+state 166
+	function_declaration:  TOKEN_KANSU TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN.block_statement 
+
+	TOKEN_KIDO  shift 169
+	TOKEN_LBRACE  shift 168
+	.  error
+
+	block_statement  goto 179
+
+state 167
+	function_literal:  TOKEN_KANSU TOKEN_LPAREN parameter_list TOKEN_RPAREN block_statement.    (67)
+
+	.  reduce 67 (src line 279)
+
+
+state 168
+	block_statement:  TOKEN_LBRACE.statement_list TOKEN_RBRACE 
+	statement_list: .    (2)
+
+	.  reduce 2 (src line 89)
+
+	statement_list  goto 180
+
+state 169
+	block_statement:  TOKEN_KIDO.statement_list TOKEN_SHUSHI 
+	statement_list: .    (2)
+
+	.  reduce 2 (src line 89)
+
+	statement_list  goto 181
+
+state 170
+	non_empty_parameter_list:  non_empty_parameter_list TOKEN_COMMA identifier.    (71)
+
+	.  reduce 71 (src line 292)
+
+
+state 171
+	expression:  expression TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN.expression 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 182
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+172: shift/reduce conflict (shift 184(0), red'n 77(0)) on TOKEN_SORENARA
+state 172
+	if_expression:  TOKEN_SORENARA TOKEN_LPAREN expression TOKEN_RPAREN block_statement.if_tail 
+	if_tail: .    (77)
+
+	TOKEN_SORENARA  shift 184
+	.  reduce 77 (src line 311)
+
+	if_tail  goto 183
+
+state 173
+	loop_expression:  TOKEN_SHUKI TOKEN_IDENTIFIER TOKEN_ASSIGN expression TOKEN_COLON.expression block_statement 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 185
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_PLUS
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_MINUS
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_LESS
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_GREATER
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_EQUALS
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_NOTEQUALS
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_AND
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_OR
+ 174: reduce/reduce conflict  (red'ns 29 and 39) on TOKEN_RBRACE
+state 174
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression TOKEN_MINUS expression.    (29)
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  TOKEN_MINUS expression.    (39)
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_ASTERISK  reduce 39 (src line 192)
+	TOKEN_SLASH  reduce 39 (src line 192)
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  reduce 39 (src line 192)
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 29 (src line 182)
+
+
+175: shift/reduce conflict (shift 129(0), red'n 74(0)) on TOKEN_RPAREN
+state 175
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  TOKEN_LPAREN expression.TOKEN_RPAREN 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	non_empty_expression_list:  expression.    (74)
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_RPAREN  shift 129
+	TOKEN_LBRACKET  shift 88
+	.  reduce 74 (src line 300)
+
+
+176: shift/reduce conflict (shift 149(0), red'n 73(0)) on TOKEN_RBRACKET
+state 176
+	expression:  expression TOKEN_LBRACKET non_empty_expression_list.TOKEN_RBRACKET 
+	expression:  expression TOKEN_LBRACKET non_empty_expression_list.TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression_list:  non_empty_expression_list.    (73)
+	non_empty_expression_list:  non_empty_expression_list.TOKEN_COMMA expression 
+
+	TOKEN_COMMA  shift 134
+	TOKEN_RBRACKET  shift 149
+	.  error
+
+
+state 177
+	ruikei_expression:  TOKEN_RUIKEI TOKEN_LBRACE expression expression TOKEN_RBRACE.    (82)
+
+	.  reduce 82 (src line 331)
+
+
+state 178
+	cell_literal_body:  TOKEN_LBRACE expression TOKEN_COMMA expression TOKEN_COMMA.expression TOKEN_COMMA expression TOKEN_RBRACE 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 186
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 179
+	function_declaration:  TOKEN_KANSU TOKEN_IDENTIFIER TOKEN_LPAREN parameter_list TOKEN_RPAREN block_statement.    (23)
+
+	.  reduce 23 (src line 161)
+
+
+state 180
+	statement_list:  statement_list.statement 
+	block_statement:  TOKEN_LBRACE statement_list.TOKEN_RBRACE 
+
+	TOKEN_SEISU  shift 18
+	TOKEN_RONRI  shift 19
+	TOKEN_RIPPOTAI  shift 11
+	TOKEN_HAIRETSU  shift 12
+	TOKEN_KANSU  shift 16
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_KIDO  shift 14
+	TOKEN_SHUSHI  shift 15
+	TOKEN_MODORU  shift 13
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_RBRACE  shift 187
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	statement  goto 3
+	expression  goto 17
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	variable_declaration  goto 4
+	return_statement  goto 5
+	break_statement  goto 6
+	continue_statement  goto 7
+	function_declaration  goto 8
+	expression_statement  goto 9
+	identifier  goto 29
+	variable_type  goto 10
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 181
+	statement_list:  statement_list.statement 
+	block_statement:  TOKEN_KIDO statement_list.TOKEN_SHUSHI 
+
+	TOKEN_SEISU  shift 18
+	TOKEN_RONRI  shift 19
+	TOKEN_RIPPOTAI  shift 11
+	TOKEN_HAIRETSU  shift 12
+	TOKEN_KANSU  shift 16
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_KIDO  shift 14
+	TOKEN_SHUSHI  shift 188
+	TOKEN_MODORU  shift 13
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	statement  goto 3
+	expression  goto 17
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	variable_declaration  goto 4
+	return_statement  goto 5
+	break_statement  goto 6
+	continue_statement  goto 7
+	function_declaration  goto 8
+	expression_statement  goto 9
+	identifier  goto 29
+	variable_type  goto 10
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 182
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression.    (46)
+	expression:  expression.TOKEN_ARROW identifier 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  reduce 46 (src line 205)
+
+
+state 183
+	if_expression:  TOKEN_SORENARA TOKEN_LPAREN expression TOKEN_RPAREN block_statement if_tail.    (76)
+
+	.  reduce 76 (src line 305)
+
+
+state 184
+	if_tail:  TOKEN_SORENARA.block_statement 
+	if_tail:  TOKEN_SORENARA.TOKEN_LPAREN expression TOKEN_RPAREN block_statement if_tail 
+
+	TOKEN_KIDO  shift 169
+	TOKEN_LPAREN  shift 190
+	TOKEN_LBRACE  shift 168
+	.  error
+
+	block_statement  goto 189
+
+state 185
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	loop_expression:  TOKEN_SHUKI TOKEN_IDENTIFIER TOKEN_ASSIGN expression TOKEN_COLON expression.block_statement 
+
+	TOKEN_KIDO  shift 169
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACE  shift 168
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+	block_statement  goto 191
+
+state 186
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	cell_literal_body:  TOKEN_LBRACE expression TOKEN_COMMA expression TOKEN_COMMA expression.TOKEN_COMMA expression TOKEN_RBRACE 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_COMMA  shift 192
+	TOKEN_LPAREN  shift 87
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 187
+	block_statement:  TOKEN_LBRACE statement_list TOKEN_RBRACE.    (24)
+
+	.  reduce 24 (src line 168)
+
+
+188: shift/reduce conflict (shift 71(0), red'n 25(0)) on TOKEN_SEMICOLON
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_SEISU
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_RONRI
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_RIPPOTAI
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_HAIRETSU
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_KANSU
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_SHUKI
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_SORENARA
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_KIDO
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_SHUSHI
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MODORU
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_RUIKEI
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_JIGEN
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_SHINRI
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_USO
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_IDENTIFIER
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_INTEGER
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_HEX
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MINUS
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_NOT
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_LPAREN
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_LBRACE
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_LBRACKET
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MOVE_UP
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MOVE_DOWN
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MOVE_LEFT
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MOVE_RIGHT
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MOVE_FORWARD
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MOVE_BACKWARD
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MEASURE_UP
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MEASURE_DOWN
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MEASURE_LEFT
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MEASURE_RIGHT
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MEASURE_FORWARD
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_MEASURE_BACKWARD
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_GET_POSITION
+ 188: reduce/reduce conflict  (red'ns 25 and 11) on TOKEN_BREAK_SEQUENCE
+state 188
+	continue_statement:  TOKEN_SHUSHI.optional_semicolon 
+	block_statement:  TOKEN_KIDO statement_list TOKEN_SHUSHI.    (25)
+	optional_semicolon: .    (11)
+
+	$end  reduce 25 (src line 172)
+	TOKEN_PLUS  reduce 25 (src line 172)
+	TOKEN_ASTERISK  reduce 25 (src line 172)
+	TOKEN_SLASH  reduce 25 (src line 172)
+	TOKEN_LESS  reduce 25 (src line 172)
+	TOKEN_GREATER  reduce 25 (src line 172)
+	TOKEN_EQUALS  reduce 25 (src line 172)
+	TOKEN_NOTEQUALS  reduce 25 (src line 172)
+	TOKEN_AND  reduce 25 (src line 172)
+	TOKEN_OR  reduce 25 (src line 172)
+	TOKEN_ARROW  reduce 25 (src line 172)
+	TOKEN_PERCENT  reduce 25 (src line 172)
+	TOKEN_COMMA  reduce 25 (src line 172)
+	TOKEN_SEMICOLON  shift 71
+	TOKEN_COLON  reduce 25 (src line 172)
+	TOKEN_RPAREN  reduce 25 (src line 172)
+	TOKEN_RBRACE  reduce 25 (src line 172)
+	TOKEN_RBRACKET  reduce 25 (src line 172)
+	.  reduce 11 (src line 113)
+
+	optional_semicolon  goto 72
+
+state 189
+	if_tail:  TOKEN_SORENARA block_statement.    (78)
+
+	.  reduce 78 (src line 313)
+
+
+state 190
+	if_tail:  TOKEN_SORENARA TOKEN_LPAREN.expression TOKEN_RPAREN block_statement if_tail 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 193
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 191
+	loop_expression:  TOKEN_SHUKI TOKEN_IDENTIFIER TOKEN_ASSIGN expression TOKEN_COLON expression block_statement.    (80)
+
+	.  reduce 80 (src line 320)
+
+
+state 192
+	cell_literal_body:  TOKEN_LBRACE expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_COMMA.expression TOKEN_RBRACE 
+
+	TOKEN_RIPPOTAI  shift 68
+	TOKEN_KANSU  shift 69
+	TOKEN_SHUKI  shift 38
+	TOKEN_SORENARA  shift 37
+	TOKEN_RUIKEI  shift 46
+	TOKEN_JIGEN  shift 47
+	TOKEN_SHINRI  shift 42
+	TOKEN_USO  shift 43
+	TOKEN_IDENTIFIER  shift 44
+	TOKEN_INTEGER  shift 40
+	TOKEN_HEX  shift 41
+	TOKEN_MINUS  shift 22
+	TOKEN_NOT  shift 23
+	TOKEN_LPAREN  shift 26
+	TOKEN_LBRACE  shift 39
+	TOKEN_LBRACKET  shift 45
+	TOKEN_MOVE_UP  shift 48
+	TOKEN_MOVE_DOWN  shift 49
+	TOKEN_MOVE_LEFT  shift 50
+	TOKEN_MOVE_RIGHT  shift 51
+	TOKEN_MOVE_FORWARD  shift 52
+	TOKEN_MOVE_BACKWARD  shift 53
+	TOKEN_MEASURE_UP  shift 54
+	TOKEN_MEASURE_DOWN  shift 55
+	TOKEN_MEASURE_LEFT  shift 56
+	TOKEN_MEASURE_RIGHT  shift 57
+	TOKEN_MEASURE_FORWARD  shift 58
+	TOKEN_MEASURE_BACKWARD  shift 59
+	TOKEN_GET_POSITION  shift 60
+	TOKEN_BREAK_SEQUENCE  shift 61
+	.  error
+
+	expression  goto 194
+	assignment_expression  goto 21
+	simple_expression  goto 20
+	literal  goto 28
+	robot_operation  goto 35
+	if_expression  goto 24
+	loop_expression  goto 25
+	array_literal  goto 30
+	cell_literal  goto 31
+	function_literal  goto 32
+	ruikei_expression  goto 33
+	jigen_expression  goto 34
+	identifier  goto 29
+	array_dims_literal  goto 36
+	sequence_expression  goto 27
+
+state 193
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	if_tail:  TOKEN_SORENARA TOKEN_LPAREN expression.TOKEN_RPAREN block_statement if_tail 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_RPAREN  shift 195
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 194
+	expression:  expression.TOKEN_PLUS expression 
+	expression:  expression.TOKEN_MINUS expression 
+	expression:  expression.TOKEN_ASTERISK expression 
+	expression:  expression.TOKEN_SLASH expression 
+	expression:  expression.TOKEN_PERCENT expression 
+	expression:  expression.TOKEN_EQUALS expression 
+	expression:  expression.TOKEN_NOTEQUALS expression 
+	expression:  expression.TOKEN_LESS expression 
+	expression:  expression.TOKEN_GREATER expression 
+	expression:  expression.TOKEN_AND expression 
+	expression:  expression.TOKEN_OR expression 
+	expression:  expression.TOKEN_LPAREN expression_list TOKEN_RPAREN 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET 
+	expression:  expression.TOKEN_LBRACKET non_empty_expression_list TOKEN_RBRACKET TOKEN_ASSIGN expression 
+	expression:  expression.TOKEN_ARROW identifier 
+	cell_literal_body:  TOKEN_LBRACE expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_COMMA expression.TOKEN_RBRACE 
+
+	TOKEN_PLUS  shift 76
+	TOKEN_MINUS  shift 77
+	TOKEN_ASTERISK  shift 78
+	TOKEN_SLASH  shift 79
+	TOKEN_LESS  shift 83
+	TOKEN_GREATER  shift 84
+	TOKEN_EQUALS  shift 81
+	TOKEN_NOTEQUALS  shift 82
+	TOKEN_AND  shift 85
+	TOKEN_OR  shift 86
+	TOKEN_ARROW  shift 89
+	TOKEN_PERCENT  shift 80
+	TOKEN_LPAREN  shift 87
+	TOKEN_RBRACE  shift 196
+	TOKEN_LBRACKET  shift 88
+	.  error
+
+
+state 195
+	if_tail:  TOKEN_SORENARA TOKEN_LPAREN expression TOKEN_RPAREN.block_statement if_tail 
+
+	TOKEN_KIDO  shift 169
+	TOKEN_LBRACE  shift 168
+	.  error
+
+	block_statement  goto 197
+
+state 196
+	cell_literal_body:  TOKEN_LBRACE expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_COMMA expression TOKEN_RBRACE.    (66)
+
+	.  reduce 66 (src line 273)
+
+
+197: shift/reduce conflict (shift 184(0), red'n 77(0)) on TOKEN_SORENARA
+state 197
+	if_tail:  TOKEN_SORENARA TOKEN_LPAREN expression TOKEN_RPAREN block_statement.if_tail 
+	if_tail: .    (77)
+
+	TOKEN_SORENARA  shift 184
+	.  reduce 77 (src line 311)
+
+	if_tail  goto 198
+
+state 198
+	if_tail:  TOKEN_SORENARA TOKEN_LPAREN expression TOKEN_RPAREN block_statement if_tail.    (79)
+
+	.  reduce 79 (src line 314)
+
+Rule not reduced: variable_type:  TOKEN_HAIRETSU 
+
+59 terminals, 37 nonterminals
+106 grammar rules, 199/16000 states
+36 shift/reduce, 47 reduce/reduce conflicts reported
+86 working sets used
+memory: parser 1227/240000
+184 extra closures
+1848 shift entries, 23 exceptions
+104 goto entries
+630 entries saved by goto default
+Optimizer space used: output 780/240000
+780 table entries, 208 zero
+maximum spread: 59, maximum offset: 197

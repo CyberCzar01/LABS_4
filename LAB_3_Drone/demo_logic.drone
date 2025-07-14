@@ -1,0 +1,4 @@
+ronri a = (10 > 5) ^ (2 == 1); // (shinri) И (uso) -> uso
+ronri b = ~a; // НЕ (uso) -> shinri
+
+b;

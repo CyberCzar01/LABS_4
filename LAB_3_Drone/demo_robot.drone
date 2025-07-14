@@ -1,0 +1,5 @@
+>_>;
+seisu dist = >_0;
+rippotai pos = *_*;
+seisu x = pos=>x; // x=1
+dist; 

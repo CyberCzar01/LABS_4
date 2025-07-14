@@ -1,0 +1,4 @@
+seisu a = 10;
+seisu b = 0xF; // 15
+ronri c = shinri;
+c;

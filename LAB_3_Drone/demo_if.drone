@@ -1,0 +1,14 @@
+seisu result = 0;
+seisu check = 5;
+
+sorenara (check > 10) {
+    result = 1;
+} sorenara {
+    sorenara (check == 5) {
+        result = 2;
+    } sorenara {
+        result = 3;
+    }
+}
+
+result; 

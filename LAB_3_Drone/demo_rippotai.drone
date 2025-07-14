@@ -1,0 +1,7 @@
+rippotai pos = {11, 22, 33, uso};
+
+seisu x = pos=>x;
+seisu y = pos=>y;
+seisu z = pos=>z;
+
+x + y + z; // 11 + 22 + 33 = 66

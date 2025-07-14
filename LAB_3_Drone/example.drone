@@ -1,0 +1,31 @@
+kansu spiral(steps) {
+    seisu x = 0;
+    seisu y = 0;
+    seisu direction = 0;
+    seisu step_limit = 1;
+    seisu step_count = 0;
+    seisu turn_count = 0;
+
+    shuki i = 0:steps {
+        sorenara (direction == 0) { >_>; }
+        sorenara (direction == 1) { ^_^; }
+        sorenara (direction == 2) { <_<; }
+        sorenara (direction == 3) { v_v; }
+
+        step_count = step_count + 1;
+        sorenara (step_count == step_limit) {
+            step_count = 0;
+            direction = (direction + 1) % 4;
+            turn_count = turn_count + 1;
+            sorenara (turn_count == 2) {
+                turn_count = 0;
+                step_limit = step_limit + 1;
+            }
+        }
+    }
+    modoru *_*;
+}
+
+seisu final_pos = spiral(20);
+
+final_pos=>y;

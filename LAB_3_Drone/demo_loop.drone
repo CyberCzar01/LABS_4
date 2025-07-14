@@ -1,0 +1,11 @@
+seisu result = 0;
+shuki i = 0:10 {
+    sorenara (i == 1) {
+        shushi;
+    }
+    result = result + i;
+    sorenara (i == 4) {
+        kido;
+    }
+}
+result; 

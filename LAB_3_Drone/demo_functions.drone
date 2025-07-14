@@ -1,0 +1,7 @@
+kansu factorial(n) {
+    sorenara (n == 0) {
+        modoru 1;
+    }
+    modoru n * factorial(n - 1);
+}
+factorial(5); 

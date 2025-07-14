@@ -1,0 +1,4 @@
+hairetsu a = [10, 20, 30];
+seisu b = a[1];
+seisu sum = a[0] + a[1] + a[2];
+sum; 
